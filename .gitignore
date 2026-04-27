@@ -1,0 +1,8 @@
+# MkDocs build output
+/site/
+/.vscode
+*/node_modules/
+/appsettings.json
+/appsettings.Development.json
+statle/Api/appsettings.json
+statle/Api/appsettings.development.json
