@@ -15,11 +15,11 @@ FROM node:20-alpine AS frontend-build
 WORKDIR /src/app
 
 # install deps
-COPY app/package*.json ./
+COPY package*.json ./
 RUN npm install
 
 # copy rest of frontend
-COPY app/. ./
+COPY . ./
 RUN npm run build
 
 # ---------- Final image ----------
@@ -33,7 +33,7 @@ RUN apt-get update && apt-get install -y nodejs npm
 COPY --from=backend-build /out ./backend
 
 # copy frontend
-COPY --from=frontend-build /src/app ./frontend
+COPY --from=frontend-build /src ./frontend
 
 # expose ports
 EXPOSE 5175
