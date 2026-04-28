@@ -13,7 +13,7 @@ export default function LoginPage() {
 
     const Login = async (username: string, password: string) => {
         try {
-            const response = await fetch("http://localhost:5175/api/auth/login", {
+            const response = await fetch("http://localhost:5055/api/auth/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

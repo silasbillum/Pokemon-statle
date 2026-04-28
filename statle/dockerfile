@@ -36,8 +36,7 @@ COPY --from=backend-build /out ./backend
 COPY --from=frontend-build /src ./frontend
 
 # expose ports
-EXPOSE 5175
-EXPOSE 3000
+EXPOSE 5055
+EXPOSE 3303
 
-# run both apps
-CMD bash -c "dotnet ./backend/statle.Api.dll & cd frontend && npm start"
+CMD bash -c "dotnet ./backend/Api.dll --urls http://0.0.0.0:5055 & cd frontend && npm start -- --hostname 0.0.0.0 --port 3303"

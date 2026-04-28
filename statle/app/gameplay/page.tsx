@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 
 export default function GameplayPage() {
 
-  const API = "http://localhost:5175/api/game";
+  const API = "http://localhost:5055/api/game";
 
   const [pokemon, setPokemon] = useState("");
   const [score, setScore] = useState(0);
