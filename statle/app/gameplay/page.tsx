@@ -2,11 +2,11 @@
 'use client';
 import Link from "next/dist/client/link";
 import Navbar from "../components/Navbar";
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 
 export default function GameplayPage() {
 
-     const API = "http://localhost:5175/api/game";
+  const API = "http://localhost:5175/api/game";
 
   const [pokemon, setPokemon] = useState("");
   const [score, setScore] = useState(0);
@@ -30,7 +30,7 @@ export default function GameplayPage() {
     setScore(0);
     setUsedStats([]);
     setMessage(data.message);
-    
+
   }
 
 
@@ -58,20 +58,20 @@ export default function GameplayPage() {
     }
   }
 
-async function SaveGame() {
-  const token = typeof window !== "undefined" ? localStorage.getItem("jwtToken") : null;
-  await fetch(`${API}/save`, {
-    method: "POST",
-    headers: {
-      ...(token ? { Authorization: `Bearer ${token}` } : {})
-    }
-  });
-}
+  async function SaveGame() {
+    const token = typeof window !== "undefined" ? localStorage.getItem("jwtToken") : null;
+    await fetch(`${API}/save`, {
+      method: "POST",
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      }
+    });
+  }
 
 
   return (
     <>
-     
+
       <main className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900 p-4 sm:p-8">
         <div className="w-full max-w-4xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
@@ -81,22 +81,22 @@ async function SaveGame() {
               </h2>
               <div className="relative w-48 h-48">
                 <div className="absolute inset-0 bg-green-100 dark:bg-green-900/50 rounded-full blur-2xl"></div>
-                <img 
+                <img
                   src={`https://img.pokemondb.net/artwork/${pokemon}.jpg`}
-                  alt={pokemon} 
+                  alt={pokemon}
                   className="relative w-full h-full object-contain drop-shadow-xl"
                 />
-                
+
               </div>
               <div className="mt-4">
-                  <p className="text-xl font-bold text-white">Score: {score}</p>
-                  <p className="text-sm text-gray-400">{message}</p>
+                <p className="text-xl font-bold text-white">Score: {score}</p>
+                <p className="text-sm text-gray-400">{message}</p>
               </div>
               <div className="mt-4">
-                  <p className="text-lg font-bold text-white">Gained: +{gained}</p>
+                <p className="text-lg font-bold text-white">Gained: +{gained}</p>
               </div>
               <div className="mt-4">
-                   Remaining: {0 + score}
+                Remaining: {0 + score}
               </div>
             </div>
             <div className="flex flex-col gap-4">
@@ -138,9 +138,9 @@ async function SaveGame() {
             </div>
           </div>
           <div className="text-center mt-8">
-              <Link href="/" className="text-sm text-gray-500 dark:text-gray-400 hover:underline">
-                  &larr; Back to Home
-              </Link>
+            <Link href="/" className="text-sm text-gray-500 dark:text-gray-400 hover:underline">
+              &larr; Back to Home
+            </Link>
           </div>
         </div>
       </main>
