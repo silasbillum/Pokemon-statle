@@ -1,9 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
+import { API_BASE_URL } from "../lib/api";
 
 export default function LeaderboardPage() {
-    const LEADERBOARD_ENDPOINT = "http://localhost:5055/api/Leaderboard/top?limit=10";
+  const LEADERBOARD_ENDPOINT = `${API_BASE_URL}/api/Leaderboard/top?limit=10`;
     const [leaderboard, setLeaderboard] = useState<{ username: string; score: number }[]>([]);
 
     useEffect(() => {
