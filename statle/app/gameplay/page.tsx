@@ -3,11 +3,10 @@
 import Link from "next/dist/client/link";
 import Navbar from "../components/Navbar";
 import { useEffect, useState } from 'react';
-import { API_BASE_URL } from "../lib/api";
 
 export default function GameplayPage() {
 
-  const API = `${API_BASE_URL}/api/game`;
+  const API = "http://localhost:5055/api/game";
 
   const [pokemon, setPokemon] = useState("");
   const [score, setScore] = useState(0);

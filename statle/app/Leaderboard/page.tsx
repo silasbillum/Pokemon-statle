@@ -1,41 +1,40 @@
 "use client";
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
-import { API_BASE_URL } from "../lib/api";
 
 export default function LeaderboardPage() {
-  const LEADERBOARD_ENDPOINT = `${API_BASE_URL}/api/Leaderboard/top?limit=10`;
-    const [leaderboard, setLeaderboard] = useState<{ username: string; score: number }[]>([]);
+  const LEADERBOARD_ENDPOINT = "http://localhost:5175/api/Leaderboard/top?limit=10";
+  const [leaderboard, setLeaderboard] = useState<{ username: string; score: number }[]>([]);
 
-    useEffect(() => {
-        const fetchLeaderboard = async () => {
-            try {
-                const response = await fetch(LEADERBOARD_ENDPOINT);
-                const data = await response.json();
-                setLeaderboard(data);
-            } catch (error) {
-                console.error("Error fetching leaderboard:", error);
-            }
-        };
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      try {
+        const response = await fetch(LEADERBOARD_ENDPOINT);
+        const data = await response.json();
+        setLeaderboard(data);
+      } catch (error) {
+        console.error("Error fetching leaderboard:", error);
+      }
+    };
 
-        fetchLeaderboard();
-    }, []);
+    fetchLeaderboard();
+  }, []);
 
 
   return (
-    
+
     <div className="flex flex-col font-sans dark:from-black dark:to-gray-900">
       <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32  bg-white dark:bg-black sm:items-start mx-auto">
         <h1 className="text-3xl font-semibold">Leaderboard</h1>
         <div className="w-full mt-8">
           <table className="w-full table-auto border-collapse border rounded-2xl border-gray-300">
-            
+
             <thead>
-                <tr>
-                    <th className="border border-gray-300 px-4 py-2">Rank</th>
-                    <th className="border border-gray-300 px-4 py-2">Username</th>
-                    <th className="border border-gray-300 px-4 py-2">Score</th>
-                </tr>
+              <tr>
+                <th className="border border-gray-300 px-4 py-2">Rank</th>
+                <th className="border border-gray-300 px-4 py-2">Username</th>
+                <th className="border border-gray-300 px-4 py-2">Score</th>
+              </tr>
             </thead>
             <tbody>
               {leaderboard.map((player, index) => (
