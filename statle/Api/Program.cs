@@ -12,6 +12,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddSingleton<GameEngine>();
 
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(20);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? Environment.GetEnvironmentVariable("ConnectionStrings__db");
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -95,6 +103,8 @@ if (app.Environment.IsProduction())
 
 app.UseForwardedHeaders();
 app.UseHttpsRedirection();
+
+app.UseSession();
 
 // OpenAPI endpoints
 app.MapOpenApi();
