@@ -2,11 +2,9 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0-preview AS backend-build
 WORKDIR /src/Api
 
-# copy csproj and restore
 COPY Api/*.csproj ./
 RUN dotnet restore
 
-# copy rest of backend
 COPY Api/. ./
 RUN dotnet publish -c Release -o /out
 
@@ -14,11 +12,9 @@ RUN dotnet publish -c Release -o /out
 FROM node:20-alpine AS frontend-build
 WORKDIR /src/app
 
-# install deps
 COPY package*.json ./
 RUN npm install
 
-# copy rest of frontend
 COPY . ./
 RUN npm run build
 
@@ -26,17 +22,15 @@ RUN npm run build
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-preview
 WORKDIR /app
 
-# install node (needed to run Next.js)
 RUN apt-get update && apt-get install -y nodejs npm
 
-# copy backend
+# backend
 COPY --from=backend-build /out ./backend
 
-# copy frontend
-COPY --from=frontend-build /src/app ./frontend
+# frontend (ROOT, not /frontend)
+COPY --from=frontend-build /src/app ./
 
-# expose ports
 EXPOSE 5055
 EXPOSE 3303
 
-CMD bash -c "dotnet ./backend/Api.dll --urls http://0.0.0.0:5055 & cd frontend && npm start -- --hostname 0.0.0.0 --port 3303"
+CMD bash -c "dotnet ./backend/Api.dll --urls http://0.0.0.0:5055 & npm start -- --hostname 0.0.0.0 --port 3303"
