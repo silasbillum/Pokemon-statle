@@ -2,20 +2,20 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0-preview AS backend-build
 WORKDIR /src/Api
 
-COPY statle/Api/*.csproj ./
+COPY Api/*.csproj ./
 RUN dotnet restore
 
-COPY statle/Api/. ./
+COPY Api/. ./
 RUN dotnet publish -c Release -o /out
 
 # ---------- Build frontend ----------
 FROM node:20 AS frontend-build
 WORKDIR /src/app
 
-COPY statle/package*.json ./
+COPY package*.json ./
 RUN npm install
 
-COPY statle/. ./
+COPY . ./
 RUN npm run build
 
 # ---------- Final image ----------
