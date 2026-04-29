@@ -1,11 +1,24 @@
 services:
-  app:
+  frontend:
     build:
       context: ./statle
-      dockerfile: dockerfile
+      dockerfile: Dockerfile
+    ports:
+      - "3303:3303"
+    environment:
+      - NEXT_TELEMETRY_DISABLED=1
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./statle
+      dockerfile: Dockerfile
     ports:
       - "5055:5055"
-      - "3303:3303"
     volumes:
       - ./statle/DataProtection-Keys:/root/.aspnet/DataProtection-Keys
+    environment:
+      - ASPNETCORE_URLS=http://0.0.0.0:5055
     restart: unless-stopped

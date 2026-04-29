@@ -2974,23 +2974,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\sila1400\\.nuget\\packages\\": {},
+    "C:\\Users\\Silas\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\sila1400\\Documents\\GitHub\\Pokemon-statle\\statle\\Api\\Api.csproj",
+      "projectUniqueName": "C:\\Users\\Silas\\Documents\\GitHub\\Pokemon-statle\\statle\\Api\\Api.csproj",
       "projectName": "Api",
-      "projectPath": "C:\\Users\\sila1400\\Documents\\GitHub\\Pokemon-statle\\statle\\Api\\Api.csproj",
-      "packagesPath": "C:\\Users\\sila1400\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\sila1400\\Documents\\GitHub\\Pokemon-statle\\statle\\Api\\obj\\",
+      "projectPath": "C:\\Users\\Silas\\Documents\\GitHub\\Pokemon-statle\\statle\\Api\\Api.csproj",
+      "packagesPath": "C:\\Users\\Silas\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Silas\\Documents\\GitHub\\Pokemon-statle\\statle\\Api\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\sila1400\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Silas\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -3018,7 +3018,7 @@
         "auditLevel": "low",
         "auditMode": "all"
       },
-      "SdkAnalysisLevel": "10.0.100"
+      "SdkAnalysisLevel": "10.0.200"
     },
     "frameworks": {
       "net10.0": {
@@ -3078,7 +3078,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.107/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.202/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.AspNetCore": "(,10.0.32767]",
           "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
