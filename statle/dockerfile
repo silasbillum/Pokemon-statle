@@ -9,7 +9,7 @@ COPY Api/. ./
 RUN dotnet publish -c Release -o /out
 
 # ---------- Build frontend ----------
-FROM node:20-alpine AS frontend-build
+FROM node:20 AS frontend-build
 WORKDIR /src/app
 
 COPY package*.json ./
@@ -27,10 +27,10 @@ RUN apt-get update && apt-get install -y nodejs npm
 # backend
 COPY --from=backend-build /out ./backend
 
-# frontend (ROOT, not /frontend)
+# frontend (place at container root `/app` — your project uses `app` folder)
 COPY --from=frontend-build /src/app ./
 
 EXPOSE 5055
 EXPOSE 3303
 
-CMD bash -c "dotnet ./backend/Api.dll --urls http://0.0.0.0:5055 & npm start -- --hostname 0.0.0.0 --port 3303"
+CMD bash -c "dotnet ./backend/Api.dll --urls http://0.0.0.0:5055 & cd /app && npm start -- --hostname 0.0.0.0 --port 3303"

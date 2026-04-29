@@ -6,3 +6,6 @@ services:
     ports:
       - "5055:5055"
       - "3303:3303"
+    volumes:
+      - ./statle/DataProtection-Keys:/root/.aspnet/DataProtection-Keys
+    restart: unless-stopped
