@@ -3,7 +3,6 @@ using statle.Api.Services;
 using statle.Api.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using System.Text.Json;
 
 namespace statle.Api.Controller;
 
@@ -14,6 +13,9 @@ public class GameController : ControllerBase
 {
     private readonly GameEngine _gameEngine;
   
+    private static GameEngine.Game? _currentGame;
+    private static PokemonDetails? _currentPokemon;
+
     private readonly AppDbContext _dbContext;
    
 
@@ -26,75 +28,64 @@ public class GameController : ControllerBase
     [HttpPost("start")]
     public IActionResult StartGame()
     {
-        var currentGame = _gameEngine.StartGame();
-        var currentPokemon = _gameEngine.GetRandomPokemon();
+        _currentGame = _gameEngine.StartGame();
+        _currentPokemon = _gameEngine.GetRandomPokemon();
 
-        if (currentPokemon == null)
+        if (_currentPokemon == null)
         {
             return NotFound("Could not find a Pokémon to start the game.");
         }
 
-        HttpContext.Session.SetString("CurrentGame", JsonSerializer.Serialize(currentGame));
-        HttpContext.Session.SetString("CurrentPokemon", JsonSerializer.Serialize(currentPokemon));
         
-        return Ok(new { message = "New game started. A mystery Pokémon has been chosen.", gameId = currentGame.GameId, pokemonName = currentPokemon.Name });
+        return Ok(new { message = "New game started. A mystery Pokémon has been chosen.", gameId = _currentGame.GameId, pokemonName = _currentPokemon.Name });
     }
 
     [HttpPost("guess/{stat}")]
     public IActionResult GuessStat(string stat)
     {
-        var currentGameJson = HttpContext.Session.GetString("CurrentGame");
-        var currentPokemonJson = HttpContext.Session.GetString("CurrentPokemon");
-
-        if (string.IsNullOrEmpty(currentGameJson) || string.IsNullOrEmpty(currentPokemonJson))
+        if (_currentGame == null || _currentPokemon == null)
         {
             return BadRequest("Game has not been started. Please call /api/game/start first.");
         }
 
-        var currentGame = JsonSerializer.Deserialize<GameEngine.Game>(currentGameJson);
-        var currentPokemon = JsonSerializer.Deserialize<PokemonDetails>(currentPokemonJson);
+        var (updatedGame, message) = _gameEngine.PickStat(_currentGame, _currentPokemon, stat);
 
-        var (updatedGame, message) = _gameEngine.PickStat(currentGame, currentPokemon, stat);
+        _currentGame = updatedGame;
 
         int gained = 0;
         switch (stat.ToLower())
         {
             case "hp":
-                gained = currentPokemon.Stats.Hp;
+                gained = _currentPokemon.Stats.Hp;
                 break;
             case "attack":
-                gained = currentPokemon.Stats.Attack;
+                gained = _currentPokemon.Stats.Attack;
                 break;
             case "defense":
-                gained = currentPokemon.Stats.Defense;
+                gained = _currentPokemon.Stats.Defense;
                 break;
             case "sp_atk":
-                gained = currentPokemon.Stats.special_attack;
+                gained = _currentPokemon.Stats.special_attack;
                 break;
             case "sp_def":
-                gained = currentPokemon.Stats.special_defense;
+                gained = _currentPokemon.Stats.special_defense;
                 break;
             case "speed":
-                gained = currentPokemon.Stats.Speed;
+                gained = _currentPokemon.Stats.Speed;
                 break;
         }
 
-        var nextPokemon = _gameEngine.GetRandomPokemon();
-        HttpContext.Session.SetString("CurrentGame", JsonSerializer.Serialize(updatedGame));
-        HttpContext.Session.SetString("CurrentPokemon", JsonSerializer.Serialize(nextPokemon));
+        _currentPokemon = _gameEngine.GetRandomPokemon();
 
-        return Ok(new { message, updatedGame.Score, pokemonName = nextPokemon.Name, gained, usedStats = updatedGame.UsedStats });
+        return Ok(new { message, updatedGame.Score, pokemonName = _currentPokemon.Name, gained, usedStats = _currentGame.UsedStats });
     }
 
     [HttpPost("Save")]
     [Authorize]
     public async Task<IActionResult> SaveGame()
     {
-        var currentGameJson = HttpContext.Session.GetString("CurrentGame");
-        if (string.IsNullOrEmpty(currentGameJson))
+        if (_currentGame == null)
             return BadRequest();
-
-        var currentGame = JsonSerializer.Deserialize<GameEngine.Game>(currentGameJson);
 
         foreach (var claim in User.Claims)
             Console.WriteLine($"CLAIM: {claim.Type} = {claim.Value}");
