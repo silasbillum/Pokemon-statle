@@ -1,2 +1,9 @@
-**
-!statle/**
+.git
+**/.git
+**/node_modules
+**/bin
+**/obj
+**/.next
+**/coverage
+**/.DS_Store
+**/*.log
