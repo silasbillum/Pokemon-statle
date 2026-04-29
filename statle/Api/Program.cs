@@ -54,15 +54,23 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-// Add CORS support for local development
+// Add CORS support
 builder.Services.AddCors(options =>
 {
+    options.AddPolicy("AllowProd", policy =>
+    {
+        policy.WithOrigins("https://statle.mercantec.tech")
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials();
+    });
+
     options.AddPolicy("AllowAllLocalhost", policy =>
     {
         policy.SetIsOriginAllowed(origin =>
         {
             var uri = new Uri(origin);
-            return uri.Host == "localhost" || uri.Host == "127.0.0.1" || uri.Host == "0.0.0.0";
+            return uri.Host == "localhost" || uri.Host == "127.0.0.1";
         })
         .AllowAnyMethod()
         .AllowAnyHeader()
@@ -80,7 +88,13 @@ builder.Services.AddOpenApi(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
+if (app.Environment.IsProduction())
+{
+    app.UseHsts();
+}
+
 app.UseForwardedHeaders();
+app.UseHttpsRedirection();
 
 // OpenAPI endpoints
 app.MapOpenApi();
@@ -92,7 +106,14 @@ app.UseSwaggerUI(options =>
 
 
 // Enable CORS - must be before UseAuthorization
-app.UseCors("AllowAllLocalhost");
+if (app.Environment.IsProduction())
+{
+    app.UseCors("AllowProd");
+}
+else
+{
+    app.UseCors("AllowAllLocalhost");
+}
 
 app.UseAuthentication();
 app.UseAuthorization();
