@@ -33,7 +33,7 @@ RUN apt-get update && apt-get install -y nodejs npm
 COPY --from=backend-build /out ./backend
 
 # copy frontend
-COPY --from=frontend-build /src ./frontend
+COPY --from=frontend-build /src/app ./frontend
 
 # expose ports
 EXPOSE 5055

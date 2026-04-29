@@ -1,24 +1,8 @@
-version: '3.8'
 services:
-  backend:
-    build:
-      context: ./statle/Api
-      dockerfile: dockerfile
-    ports:
-      - "5055:5055"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-   
-
-  frontend:
+  app:
     build:
       context: ./statle
       dockerfile: dockerfile
     ports:
+      - "5055:5055"
       - "3303:3303"
-    environment:
-      - NODE_ENV=development
-    depends_on:
-      - backend
-
-# 
