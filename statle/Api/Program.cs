@@ -101,6 +101,35 @@ if (app.Environment.IsProduction())
     app.UseHsts();
 }
 
+app.Use(async (context, next) =>
+{
+    try
+    {
+        await next();
+    }
+    catch (Exception)
+    {
+        if (!context.Response.Headers.ContainsKey("Access-Control-Allow-Origin"))
+        {
+            var policyName = app.Environment.IsProduction() ? "AllowProd" : "AllowAllLocalhost";
+            var corsService = context.RequestServices.GetRequiredService<Microsoft.AspNetCore.Cors.Infrastructure.ICorsService>();
+            var corsPolicyProvider = context.RequestServices.GetRequiredService<Microsoft.AspNetCore.Cors.Infrastructure.ICorsPolicyProvider>();
+            var policy = await corsPolicyProvider.GetPolicyAsync(context, policyName);
+            if (policy != null)
+            {
+                var result = corsService.EvaluatePolicy(context, policy);
+                corsService.ApplyResult(result, context.Response);
+            }
+        }
+
+        if (!context.Response.HasStarted)
+        {
+            context.Response.StatusCode = 500;
+            await context.Response.WriteAsync("An unexpected error occurred.");
+        }
+    }
+});
+
 app.UseForwardedHeaders();
 app.UseHttpsRedirection();
 
