@@ -1,8 +1,8 @@
 services:
   app:
     build:
-      context: ./statle
-      dockerfile: dockerfile
+      context: .
+      dockerfile: statle/dockerfile
     ports:
       - "5055:5055"
       - "3303:3303"
