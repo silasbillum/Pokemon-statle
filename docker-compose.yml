@@ -13,8 +13,8 @@ services:
 
   backend:
     build:
-      context: ./statle/Api
-      dockerfile: Dockerfile
+      context: ./statle
+      dockerfile: Api/Dockerfile
     ports:
       - "5055:5055"
     volumes:

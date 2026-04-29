@@ -41,16 +41,16 @@ export default function LoginPage() {
         try {
             const data = await Login(username, password);
 
-if (data && data.token) {
-    localStorage.setItem("jwtToken", data.token);
+            if (data && data.token) {
+                localStorage.setItem("jwtToken", data.token);
 
-    localStorage.setItem(
-        "user",
-        JSON.stringify({ username: data.username })
-    );
+                localStorage.setItem(
+                    "user",
+                    JSON.stringify({ username: data.username })
+                );
 
-    window.location.href = "/";
-    
+                window.location.href = "/";
+
             } else {
                 setError("Login failed. No token received.");
             }
