@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 
 export default function GameplayPage() {
 
-  const API = "https://statle-api.mercantec.tech/api/game";
+  const API = "/api/game";
 
   const [pokemon, setPokemon] = useState("");
   const [score, setScore] = useState(0);

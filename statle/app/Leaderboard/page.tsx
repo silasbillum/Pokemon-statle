@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 
 export default function LeaderboardPage() {
-  const LEADERBOARD_ENDPOINT = "https://statle-api.mercantec.tech/api/Leaderboard/top?limit=10";
+  const LEADERBOARD_ENDPOINT = "/api/Leaderboard/top?limit=10";
   const [leaderboard, setLeaderboard] = useState<{ username: string; score: number }[]>([]);
 
   useEffect(() => {

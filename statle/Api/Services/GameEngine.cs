@@ -17,25 +17,12 @@ public class GameEngine
             Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "public", "pokemon-details.json")),
         };
 
-        try
-        {
-            var jsonFilePath = candidatePaths.FirstOrDefault(File.Exists);
-            if (jsonFilePath == null)
-            {
-                Console.WriteLine("pokemon-details.json was not found. GameEngine will run with an empty dataset.");
-                _pokemonList = new List<PokemonDetails>();
-                return;
-            }
+        var jsonFilePath = candidatePaths.FirstOrDefault(File.Exists)
+            ?? throw new FileNotFoundException("Could not locate pokemon-details.json.", candidatePaths[0]);
 
-            var jsonString = File.ReadAllText(jsonFilePath);
-            var pokemonData = JsonSerializer.Deserialize<PokemonData>(jsonString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            _pokemonList = pokemonData?.Pokemon ?? new List<PokemonDetails>();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Failed to load pokemon-details.json: {ex.Message}");
-            _pokemonList = new List<PokemonDetails>();
-        }
+        var jsonString = File.ReadAllText(jsonFilePath);
+        var pokemonData = JsonSerializer.Deserialize<PokemonData>(jsonString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        _pokemonList = pokemonData?.Pokemon ?? new List<PokemonDetails>();
     }
 
     public (Game game, string message) PickStat(Game game, PokemonDetails pokemon, string chosenStat)
