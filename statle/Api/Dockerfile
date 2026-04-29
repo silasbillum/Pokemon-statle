@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0-preview AS build
 WORKDIR /src
 
 COPY Api/Api.csproj ./Api/
-RUN dotnet restore ./Api/Api.csproj
+RUN dotnet restore
 
 COPY Api/. ./Api/
 COPY public ./public
