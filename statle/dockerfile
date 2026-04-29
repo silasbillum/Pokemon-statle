@@ -1,0 +1,45 @@
+# ---------- Build backend ----------
+FROM mcr.microsoft.com/dotnet/sdk:10.0-preview AS backend-build
+WORKDIR /src/Api
+
+COPY Api/*.csproj ./
+RUN dotnet restore
+
+COPY Api/. ./
+RUN dotnet publish -c Release -o /out
+
+# ---------- Build frontend ----------
+FROM node:20 AS frontend-build
+WORKDIR /src/app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . ./
+RUN npm run build
+
+# ---------- Final image ----------
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-preview
+WORKDIR /app
+
+# Install Node.js 20+ for Next.js runtime (Next 16 requires >=20.9.0).
+RUN apt-get update && apt-get install -y curl xz-utils ca-certificates \
+    && ARCH="$(dpkg --print-architecture)" \
+    && if [ "$ARCH" = "amd64" ]; then NODE_ARCH="x64"; elif [ "$ARCH" = "arm64" ]; then NODE_ARCH="arm64"; else echo "Unsupported architecture: $ARCH"; exit 1; fi \
+    && curl -fsSL "https://nodejs.org/dist/v20.19.0/node-v20.19.0-linux-${NODE_ARCH}.tar.xz" -o /tmp/node.tar.xz \
+    && tar -xJf /tmp/node.tar.xz -C /usr/local --strip-components=1 \
+    && rm -f /tmp/node.tar.xz \
+    && node -v \
+    && npm -v \
+    && rm -rf /var/lib/apt/lists/*
+
+# backend
+COPY --from=backend-build /out ./backend
+
+# frontend (place at container root `/app` — your project uses `app` folder)
+COPY --from=frontend-build /src/app ./
+
+EXPOSE 5055
+EXPOSE 3303
+
+CMD bash -c "dotnet ./backend/Api.dll --urls http://0.0.0.0:5055 & cd /app && npm start -- --hostname 0.0.0.0 --port 3303"

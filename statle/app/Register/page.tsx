@@ -43,9 +43,9 @@ export default function RegisterPage() {
             if (data && data.token) {
                 localStorage.setItem("jwtToken", data.token);
                 localStorage.setItem(
-                    "user",
-                    JSON.stringify({ username: data.username })
-                );
+        "user",
+        JSON.stringify({ username: data.username })
+    );
                 window.location.href = "/";
             } else {
                 setError("Registration failed. No token received.");
