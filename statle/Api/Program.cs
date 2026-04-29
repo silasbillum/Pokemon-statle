@@ -57,12 +57,16 @@ builder.Services.AddAuthorization();
 // Add CORS support for local development
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend", policy =>
+    options.AddPolicy("AllowAllLocalhost", policy =>
     {
-        policy.WithOrigins("https://statle.mercantec.tech")
-              .AllowAnyMethod()
-              .AllowAnyHeader()
-              .AllowCredentials();
+        policy.SetIsOriginAllowed(origin =>
+        {
+            var uri = new Uri(origin);
+            return uri.Host == "localhost" || uri.Host == "127.0.0.1" || uri.Host == "0.0.0.0";
+        })
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials();
     });
 });
 
@@ -88,7 +92,7 @@ app.UseSwaggerUI(options =>
 
 
 // Enable CORS - must be before UseAuthorization
-app.UseCors("AllowFrontend");
+app.UseCors("AllowAllLocalhost");
 
 app.UseAuthentication();
 app.UseAuthorization();
