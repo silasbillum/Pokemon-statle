@@ -13,7 +13,7 @@ export default function RegisterPage() {
 
     const Register = async (username: string, password: string) => {
         try {
-            const response = await fetch("/api/auth/register", {
+            const response = await fetch("https://statle-api.mercantec.tech/api/auth/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
