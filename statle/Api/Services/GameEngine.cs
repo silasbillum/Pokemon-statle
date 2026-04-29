@@ -9,9 +9,7 @@ public class GameEngine
 
     public GameEngine()
     {
-        var baseDirectory = AppContext.BaseDirectory;
-        var projectRoot = Path.GetFullPath(Path.Combine(baseDirectory, "..", "..", "..", ".."));
-        var jsonFilePath = Path.Combine(projectRoot, "public", "pokemon-details.json");
+        var jsonFilePath = Path.Combine(AppContext.BaseDirectory, "pokemon-details.json");
 
         var jsonString = File.ReadAllText(jsonFilePath);
         var pokemonData = JsonSerializer.Deserialize<PokemonData>(jsonString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
