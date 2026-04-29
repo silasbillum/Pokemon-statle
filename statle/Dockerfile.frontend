@@ -24,4 +24,4 @@ COPY --from=builder /app/public ./public
 
 EXPOSE 3303
 
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "start", "--", "-p", "3303"]
