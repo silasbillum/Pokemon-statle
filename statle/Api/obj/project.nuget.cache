@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "0mWvxnegPAw=",
+  "dgSpecHash": "sjMj7KLY0oo=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Silas\\Documents\\GitHub\\Pokemon-statle\\statle\\Api\\Api.csproj",
+  "projectFilePath": "C:\\Users\\Silas\\Documents\\GitHub\\Pokemon-statle\\statle\\api\\Api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Silas\\.nuget\\packages\\bcrypt.net-next\\4.1.0\\bcrypt.net-next.4.1.0.nupkg.sha512",
     "C:\\Users\\Silas\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
