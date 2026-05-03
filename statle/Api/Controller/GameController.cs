@@ -48,7 +48,8 @@ public class GameController : ControllerBase
             return BadRequest("Game has not been started. Please call /api/game/start first.");
         }
 
-        var (updatedGame, message) = _gameEngine.PickStat(_currentGame, _currentPokemon, stat);
+        var guessedPokemon = _currentPokemon;
+        var (updatedGame, message) = _gameEngine.PickStat(_currentGame, guessedPokemon, stat);
 
         _currentGame = updatedGame;
 
@@ -56,28 +57,40 @@ public class GameController : ControllerBase
         switch (stat.ToLower())
         {
             case "hp":
-                gained = _currentPokemon.Stats.Hp;
+                gained = guessedPokemon.Stats.Hp;
                 break;
             case "attack":
-                gained = _currentPokemon.Stats.Attack;
+                gained = guessedPokemon.Stats.Attack;
                 break;
             case "defense":
-                gained = _currentPokemon.Stats.Defense;
+                gained = guessedPokemon.Stats.Defense;
                 break;
             case "sp_atk":
-                gained = _currentPokemon.Stats.special_attack;
+                gained = guessedPokemon.Stats.special_attack;
                 break;
             case "sp_def":
-                gained = _currentPokemon.Stats.special_defense;
+                gained = guessedPokemon.Stats.special_defense;
                 break;
             case "speed":
-                gained = _currentPokemon.Stats.Speed;
+                gained = guessedPokemon.Stats.Speed;
                 break;
         }
 
         _currentPokemon = _gameEngine.GetRandomPokemon();
 
-        return Ok(new { message, updatedGame.Score, pokemonName = _currentPokemon.Name, gained, usedStats = _currentGame.UsedStats });
+        return Ok(new
+        {
+            message,
+            score = updatedGame.Score,
+            pokemonName = _currentPokemon.Name,
+            gained,
+            usedStats = _currentGame.UsedStats,
+            revealedPokemon = new
+            {
+                name = guessedPokemon.Name,
+                stats = guessedPokemon.Stats
+            }
+        });
     }
 
     [HttpPost("Save")]
