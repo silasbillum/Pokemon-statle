@@ -90,7 +90,7 @@ export default function GameplayPage() {
         [stat]: data.gained
       }));
       setGameOver(true);
-      if (data.score >= 200) {
+      if (data.score >= 600) {
         scrollTo({ top: 0, behavior: "smooth" });
         await WonGame();
 

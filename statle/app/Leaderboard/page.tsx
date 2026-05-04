@@ -22,11 +22,11 @@ export default function LeaderboardPage() {
 
   const getRankImage = (rank: number) => {
     if (rank === 1) {
-      return "/masterball.png";
+      return "/Masterball.png";
     } else if (rank === 2) {
-      return "/ultraball.png";
+      return "/Ultraball.png";
     } else if (rank === 3) {
-      return "/greatball.png";
+      return "/Greatball.png";
     } else {
       return "/pokeball.png";
     }

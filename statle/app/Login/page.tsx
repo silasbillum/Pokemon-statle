@@ -13,7 +13,7 @@ export default function LoginPage() {
 
     const Login = async (username: string, password: string) => {
         try {
-            const response = await fetch("https://localhost:5175/api/auth/login", {
+            const response = await fetch("https://statle-api.mercantec.tech/api/auth/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -41,16 +41,16 @@ export default function LoginPage() {
         try {
             const data = await Login(username, password);
 
-if (data && data.token) {
-    localStorage.setItem("jwtToken", data.token);
+            if (data && data.token) {
+                localStorage.setItem("jwtToken", data.token);
 
-    localStorage.setItem(
-        "user",
-        JSON.stringify({ username: data.username })
-    );
+                localStorage.setItem(
+                    "user",
+                    JSON.stringify({ username: data.username })
+                );
 
-    window.location.href = "/";
-    
+                window.location.href = "/";
+
             } else {
                 setError("Login failed. No token received.");
             }

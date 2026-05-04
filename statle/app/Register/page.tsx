@@ -13,7 +13,7 @@ export default function RegisterPage() {
 
     const Register = async (username: string, password: string) => {
         try {
-            const response = await fetch("http://localhost:5175/api/auth/register", {
+            const response = await fetch("https://statle-api.mercantec.tech/api/auth/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -43,9 +43,9 @@ export default function RegisterPage() {
             if (data && data.token) {
                 localStorage.setItem("jwtToken", data.token);
                 localStorage.setItem(
-        "user",
-        JSON.stringify({ username: data.username })
-    );
+                    "user",
+                    JSON.stringify({ username: data.username })
+                );
                 window.location.href = "/";
             } else {
                 setError("Registration failed. No token received.");
