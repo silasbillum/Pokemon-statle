@@ -16,4 +16,4 @@ COPY --from=build /app/publish ./
 
 EXPOSE 5055
 
-ENTRYPOINT ["dotnet", "Api.dll"]
+ENTRYPOINT dotnet Api.dll
