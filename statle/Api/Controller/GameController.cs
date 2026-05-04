@@ -28,16 +28,26 @@ public class GameController : ControllerBase
     [HttpPost("start")]
     public IActionResult StartGame()
     {
-        _currentGame = _gameEngine.StartGame();
-        _currentPokemon = _gameEngine.GetRandomPokemon();
-
-        if (_currentPokemon == null)
+        try
         {
-            return NotFound("Could not find a Pokémon to start the game.");
+            _currentGame = _gameEngine.StartGame();
+            _currentPokemon = _gameEngine.GetRandomPokemon();
+
+            if (_currentPokemon == null)
+            {
+                Console.WriteLine("DEBUG: _currentPokemon is null");
+                return NotFound("Could not find a Pokémon to start the game.");
+            }
+
+            Console.WriteLine($"DEBUG: Game started with Pokémon: {_currentPokemon.Name}");
+            return Ok(new { message = "New game started. A mystery Pokémon has been chosen.", gameId = _currentGame.GameId, pokemonName = _currentPokemon.Name });
         }
-
-
-        return Ok(new { message = "New game started. A mystery Pokémon has been chosen.", gameId = _currentGame.GameId, pokemonName = _currentPokemon.Name });
+        catch (Exception ex)
+        {
+            Console.WriteLine($"DEBUG: An error occurred in StartGame: {ex.Message}");
+            Console.WriteLine($"DEBUG: StackTrace: {ex.StackTrace}");
+            return StatusCode(500, "An internal server error occurred.");
+        }
     }
 
     [HttpPost("guess/{stat}")]
