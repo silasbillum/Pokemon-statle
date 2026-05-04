@@ -21,4 +21,9 @@ services:
       - ./statle/DataProtection-Keys:/root/.aspnet/DataProtection-Keys
     environment:
       - ASPNETCORE_URLS=http://0.0.0.0:5055
+      - ConnectionStrings__db=${ConnectionStrings__db}
+      - Jwt__SecretKey=${Jwt__SecretKey}
+      - Jwt__Issuer=${Jwt__Issuer}
+      - Jwt__Audience=${Jwt__Audience}
+      - Jwt__ExpiryMinutes=${Jwt__ExpiryMinutes}
     restart: unless-stopped
