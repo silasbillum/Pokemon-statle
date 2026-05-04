@@ -40,6 +40,12 @@ export default function GameplayPage() {
   }, []);
 
   useEffect(() => {
+    if (won) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [won]);
+
+  useEffect(() => {
     setArtworkName(pokemon);
   }, [pokemon]);
 
@@ -84,9 +90,11 @@ export default function GameplayPage() {
         [stat]: data.gained
       }));
       setGameOver(true);
-      if (data.score >= 400) {
-      await WonGame();
-    }
+      if (data.score >= 200) {
+        scrollTo({ top: 0, behavior: "smooth" });
+        await WonGame();
+
+      }
       await SaveGame();
       return;
     }
@@ -107,7 +115,7 @@ export default function GameplayPage() {
       setbackground("bg-red-100 dark:bg-red-900");
     }
 
-    
+
 
 
   }
@@ -129,6 +137,7 @@ export default function GameplayPage() {
 
   async function WonGame() {
     setWon(true);
+    scrollTo({ top: 0, behavior: "smooth" });
   }
 
   async function ShowAllStats() {
@@ -142,7 +151,7 @@ export default function GameplayPage() {
   return (
     <>
       {won && <Congratulations onPlayAgain={startGame} />}
-              
+
       <main className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900 p-4 sm:p-8">
         <div className="w-full max-w-7xl mx-auto">
           <h1 className="text-4xl font-bold text-center text-gray-800 dark:text-gray-200 mb-12">Statle - Guess the Pokémon's Stats!</h1>
@@ -168,41 +177,41 @@ export default function GameplayPage() {
 
               </div>
               <div className="mt-4">
-                <p className="text-xl font-bold text-white">Score: {score}</p>
+                <p className="text-xl font-bold text-black dark:text-white">Score: {score}</p>
                 <p className="text-sm text-gray-400">{message}</p>
               </div>
-              
-              
+
+
             </div>
             <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_240px] gap-8 items-start">
               <div className="flex flex-col gap-4">
 
-              <>
-                <button onClick={() => handleGuess("hp")} disabled={usedStats.includes("hp")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200`}>
-                  <span className="text-lg font-semibold text-gray-700 dark:text-gray-200 ">HP </span>
-                  <span className={`text-xl font-mono font-bold ${getColor(revealedStats["hp"])}`}>{revealedStats["hp"] ?? "?"}</span>
-                </button>
-                <button onClick={() => handleGuess("attack")} disabled={usedStats.includes("attack")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200 `}>
-                  <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">Attack</span>
-                  <span className={`text-xl font-mono font-bold ${getColor(revealedStats["attack"])}`}>{revealedStats["attack"] ?? "?"}</span>
-                </button>
-                <button onClick={() => handleGuess("defense")} disabled={usedStats.includes("defense")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200 `}>
-                  <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">Defense</span>
-                  <span className={`text-xl font-mono font-bold ${getColor(revealedStats["defense"])}`}>{revealedStats["defense"] ?? "?"}</span>
-                </button>
-                <button onClick={() => handleGuess("sp_atk")} disabled={usedStats.includes("sp_atk")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200 `}>
-                  <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">Sp. Atk</span>
-                  <span className={`text-xl font-mono font-bold ${getColor(revealedStats["sp_atk"])}`}>{revealedStats["sp_atk"] ?? "?"}</span>
-                </button>
-                <button onClick={() => handleGuess("sp_def")} disabled={usedStats.includes("sp_def")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200 `}>
-                  <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">Sp. Def</span>
-                  <span className={`text-xl font-mono font-bold ${getColor(revealedStats["sp_def"])}`}>{revealedStats["sp_def"] ?? "?"}</span>
-                </button>
-                <button onClick={() => handleGuess("speed")} disabled={usedStats.includes("speed")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200 `}>
-                  <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">Speed</span>
-                  <span className={`text-xl font-mono font-bold ${getColor(revealedStats["speed"])}`}>{revealedStats["speed"] ?? "?"}</span>
-                </button>
-              </>
+                <>
+                  <button onClick={() => handleGuess("hp")} disabled={usedStats.includes("hp")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200`}>
+                    <span className="text-lg font-semibold text-gray-700 dark:text-gray-200 ">HP </span>
+                    <span className={`text-xl font-mono font-bold ${getColor(revealedStats["hp"])}`}>{revealedStats["hp"] ?? "?"}</span>
+                  </button>
+                  <button onClick={() => handleGuess("attack")} disabled={usedStats.includes("attack")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200 `}>
+                    <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">Attack</span>
+                    <span className={`text-xl font-mono font-bold ${getColor(revealedStats["attack"])}`}>{revealedStats["attack"] ?? "?"}</span>
+                  </button>
+                  <button onClick={() => handleGuess("defense")} disabled={usedStats.includes("defense")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200 `}>
+                    <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">Defense</span>
+                    <span className={`text-xl font-mono font-bold ${getColor(revealedStats["defense"])}`}>{revealedStats["defense"] ?? "?"}</span>
+                  </button>
+                  <button onClick={() => handleGuess("sp_atk")} disabled={usedStats.includes("sp_atk")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200 `}>
+                    <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">Sp. Atk</span>
+                    <span className={`text-xl font-mono font-bold ${getColor(revealedStats["sp_atk"])}`}>{revealedStats["sp_atk"] ?? "?"}</span>
+                  </button>
+                  <button onClick={() => handleGuess("sp_def")} disabled={usedStats.includes("sp_def")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200 `}>
+                    <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">Sp. Def</span>
+                    <span className={`text-xl font-mono font-bold ${getColor(revealedStats["sp_def"])}`}>{revealedStats["sp_def"] ?? "?"}</span>
+                  </button>
+                  <button onClick={() => handleGuess("speed")} disabled={usedStats.includes("speed")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200 `}>
+                    <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">Speed</span>
+                    <span className={`text-xl font-mono font-bold ${getColor(revealedStats["speed"])}`}>{revealedStats["speed"] ?? "?"}</span>
+                  </button>
+                </>
 
               </div>
 

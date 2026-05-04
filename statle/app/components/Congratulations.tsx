@@ -10,7 +10,7 @@ export default function Congratulations({ onPlayAgain }: CongratulationsProps) {
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-800">
             <Confetti />
-            
+
             <h1 className="text-4xl font-bold text-green-600 mb-4">Congratulations!</h1>
             <p className="text-lg text-gray-700 dark:text-gray-300 mb-8">You got over 600 points!</p>
 

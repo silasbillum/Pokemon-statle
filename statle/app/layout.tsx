@@ -28,9 +28,15 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="h-full bg-gray-50">
         <Navbar />
-        {children}
+        <main className="flex-grow">{children}</main>
       </body>
     </html>
   );
