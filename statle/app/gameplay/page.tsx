@@ -21,7 +21,7 @@ type RevealedPokemon = {
 
 export default function GameplayPage() {
 
-  const API = `http://localhost:5175/api/game`;
+  const API = `https://statle-api.mercantec.tech/api/game`;
 
   const [pokemon, setPokemon] = useState("");
   const [score, setScore] = useState(0);
