@@ -46,7 +46,7 @@ export default function Home() {
               onClick={() => router.push('/Leaderboard')}
               className="group relative flex flex-col justify-between rounded-2xl bg-white dark:bg-gray-800 shadow-lg overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-2xl hover:scale-105"
               style={{
-                backgroundImage: "url('/masterball.png')",
+                backgroundImage: "url('/Masterball.png')",
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
               }}
