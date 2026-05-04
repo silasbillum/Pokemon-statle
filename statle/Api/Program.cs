@@ -95,6 +95,8 @@ builder.Services.AddOpenApi(options =>
 
 var app = builder.Build();
 
+app.UseStaticFiles();
+
 // Configure the HTTP request pipeline
 if (app.Environment.IsProduction())
 {
@@ -145,14 +147,7 @@ app.UseSwaggerUI(options =>
 
 
 // Enable CORS - must be before UseAuthorization
-if (app.Environment.IsProduction())
-{
-    app.UseCors("AllowProd");
-}
-else
-{
-    app.UseCors("AllowAllLocalhost");
-}
+app.UseCors(app.Environment.IsProduction() ? "AllowProd" : "AllowAllLocalhost");
 
 app.UseAuthentication();
 app.UseAuthorization();

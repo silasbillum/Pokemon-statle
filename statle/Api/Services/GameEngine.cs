@@ -1,69 +1,68 @@
 using System.Text.Json;
 
 namespace statle.Api.Services;
+
 public class GameEngine
 {
     List<String> usedStats = new List<String>();
     private readonly List<PokemonDetails> _pokemonList;
     private readonly Random _rng = new();
 
-    public GameEngine()
+    public GameEngine(IWebHostEnvironment env)
     {
-        var baseDirectory = AppContext.BaseDirectory;
-        var projectRoot = Path.GetFullPath(Path.Combine(baseDirectory, "..", "..", "..", ".."));
-        var jsonFilePath = Path.Combine(projectRoot, "public", "pokemon-details.json");
+        var jsonFilePath = Path.Combine(env.WebRootPath, "pokemon-details.json");
 
         var jsonString = File.ReadAllText(jsonFilePath);
         var pokemonData = JsonSerializer.Deserialize<PokemonData>(jsonString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         _pokemonList = pokemonData?.Pokemon ?? new List<PokemonDetails>();
     }
 
-     public (Game game, string message) PickStat(Game game, PokemonDetails pokemon, string chosenStat)
-{
-    
-    if (game.UsedStats.Contains(chosenStat.ToLower()))
+    public (Game game, string message) PickStat(Game game, PokemonDetails pokemon, string chosenStat)
     {
-        return (game, "Stat already used!");
+
+        if (game.UsedStats.Contains(chosenStat.ToLower()))
+        {
+            return (game, "Stat already used!");
+        }
+
+        int value = 0;
+
+
+        switch (chosenStat.ToLower())
+        {
+            case "hp":
+                value = pokemon.Stats.Hp;
+                break;
+            case "attack":
+                value = pokemon.Stats.Attack;
+                break;
+            case "defense":
+                value = pokemon.Stats.Defense;
+                break;
+            case "sp_atk":
+                value = pokemon.Stats.special_attack;
+                break;
+            case "sp_def":
+                value = pokemon.Stats.special_defense;
+                break;
+            case "speed":
+                value = pokemon.Stats.Speed;
+                break;
+            default:
+                return (game, "Invalid stat");
+        }
+
+
+        game.UsedStats.Add(chosenStat.ToLower());
+        game.Score += value;
+
+        return (game, $"You gained {value} points!");
     }
-
-    int value = 0;
-
-    
-    switch (chosenStat.ToLower())
-    {
-        case "hp":
-            value = pokemon.Stats.Hp;
-            break;
-        case "attack":
-            value = pokemon.Stats.Attack;
-            break;
-        case "defense":
-            value = pokemon.Stats.Defense;
-            break;
-        case "sp_atk":
-            value = pokemon.Stats.special_attack;
-            break;
-        case "sp_def":
-            value = pokemon.Stats.special_defense;
-            break;
-        case "speed":
-            value = pokemon.Stats.Speed;
-            break;
-        default:
-            return (game, "Invalid stat");
-    }
-
-    
-    game.UsedStats.Add(chosenStat.ToLower());
-    game.Score += value;
-
-    return (game, $"You gained {value} points!");
-}
     public class Game
     {
-     public Guid GameId { get; set; } = Guid.NewGuid();
-     public List<string> UsedStats { get; set; } = new List<string>();
-     public int Score { get; set; } = 0;   
+        public Guid GameId { get; set; } = Guid.NewGuid();
+        public List<string> UsedStats { get; set; } = new List<string>();
+        public int Score { get; set; } = 0;
     }
 
     public Game StartGame()
