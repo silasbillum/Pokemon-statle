@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import { useRouter } from "next/navigation";
+import API_BASE_URL from '../lib/api';
 export default function RegisterPage() {
 
     const [username, setUsername] = useState("");
@@ -13,7 +14,10 @@ export default function RegisterPage() {
 
     const Register = async (username: string, password: string) => {
         try {
-            const response = await fetch("https://statle-api.mercantec.tech/api/auth/register", {
+
+            // ... existing code ...
+
+            const response = await fetch(`${API_BASE_URL}/auth/register`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

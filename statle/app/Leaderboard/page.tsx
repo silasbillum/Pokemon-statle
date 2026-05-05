@@ -1,9 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
+import API_BASE_URL from '../lib/api';
 
 export default function LeaderboardPage() {
-  const LEADERBOARD_ENDPOINT = "https://statle-api.mercantec.tech/api/Leaderboard/top?limit=10";
+
+const LEADERBOARD_ENDPOINT = `${API_BASE_URL}/Leaderboard/top?limit=10`;
   const [leaderboard, setLeaderboard] = useState<{ username: string; score: number }[]>([]);
 
   useEffect(() => {

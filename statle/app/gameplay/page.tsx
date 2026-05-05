@@ -6,6 +6,7 @@ import Congratulations from "../components/Congratulations";
 import { useEffect, useState } from 'react';
 import { refresh } from "next/cache";
 import Confetti from "react-confetti";
+import API_BASE_URL from '../lib/api';
 
 type RevealedPokemon = {
   name: string;
@@ -21,7 +22,11 @@ type RevealedPokemon = {
 
 export default function GameplayPage() {
 
-  const API = `https://statle-api.mercantec.tech/api/game`;
+
+
+  // ... existing code ...
+
+  const API = `${API_BASE_URL}/game`;
 
   const [pokemon, setPokemon] = useState("");
   const [score, setScore] = useState(0);
