@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { refresh } from "next/cache";
 import Confetti from "react-confetti";
 import API_BASE_URL from '../lib/api';
+import LostScreen from "../components/LostScreen";
 
 type RevealedPokemon = {
   name: string;
@@ -100,6 +101,7 @@ export default function GameplayPage() {
         await WonGame();
 
       }
+      else { LostScreen({ onPlayAgain: startGame, score: data.score }) }
       await SaveGame();
       return;
     }
@@ -156,6 +158,7 @@ export default function GameplayPage() {
   return (
     <>
       {won && <Congratulations onPlayAgain={startGame} />}
+      {gameOver && !won && <LostScreen onPlayAgain={startGame} score={score} />}
 
       <main className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900 p-4 sm:p-8">
         <div className="w-full max-w-7xl mx-auto">

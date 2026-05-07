@@ -77,12 +77,19 @@ try
             ValidateAudience = true,
             ValidAudience = jwtAudience,
             ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero,
+            NameClaimType = "sub" // Map 'sub' claim to Identity.Name
         };
         options.Events = new JwtBearerEvents
         {
             OnAuthenticationFailed = context =>
             {
-                Console.WriteLine("JWT ERROR: " + context.Exception.Message);
+                Console.WriteLine("JWT Authentication Failed: " + context.Exception.Message);
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = context =>
+            {
+                Console.WriteLine("JWT Token Validated for: " + context.Principal.Identity.Name);
                 return Task.CompletedTask;
             }
         };

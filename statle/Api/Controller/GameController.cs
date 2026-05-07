@@ -3,6 +3,7 @@ using statle.Api.Services;
 using statle.Api.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace statle.Api.Controller;
 
@@ -62,6 +63,7 @@ public class GameController : ControllerBase
         var (updatedGame, message) = _gameEngine.PickStat(_currentGame, guessedPokemon, stat);
 
         _currentGame = updatedGame;
+        _currentGame.EncounteredPokemon.Add(guessedPokemon);
 
         int gained = 0;
         switch (stat.ToLower())
@@ -107,11 +109,8 @@ public class GameController : ControllerBase
     [Authorize]
     public async Task<IActionResult> SaveGame()
     {
-        if (_currentGame == null)
-            return BadRequest();
-
-        foreach (var claim in User.Claims)
-            Console.WriteLine($"CLAIM: {claim.Type} = {claim.Value}");
+        if (_currentGame == null || !_currentGame.EncounteredPokemon.Any())
+            return BadRequest("No active game or encountered Pokemon to save.");
 
         var userIdClaim = User.Claims.FirstOrDefault(c =>
             c.Type == System.Security.Claims.ClaimTypes.NameIdentifier && Guid.TryParse(c.Value, out _));
@@ -119,6 +118,7 @@ public class GameController : ControllerBase
             return Unauthorized("User ID not found in token.");
         var userId = Guid.Parse(userIdClaim.Value);
 
+        // Save the game score
         var game = new Game
         {
             Id = Guid.NewGuid(),
@@ -126,10 +126,59 @@ public class GameController : ControllerBase
             Score = _currentGame.Score,
             UsedStatsJson = System.Text.Json.JsonSerializer.Serialize(_currentGame.UsedStats)
         };
-
         _dbContext.Games.Add(game);
+
+        
+        bool isWin = _currentGame.Score >= 600;
+
+        foreach (var pokemon in _currentGame.EncounteredPokemon)
+        {
+            var pokedexEntry = await _dbContext.UserPokedexEntries
+                .FirstOrDefaultAsync(p => p.UserId == userId && p.PokemonId == pokemon.Id);
+
+            if (pokedexEntry == null)
+            {
+                _dbContext.UserPokedexEntries.Add(new UserPokedexEntry
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = userId,
+                    PokemonId = pokemon.Id,
+                    PokemonName = pokemon.Name,
+                    Status = isWin ? PokedexStatus.Caught : PokedexStatus.Seen
+                });
+            }
+            else if (isWin && pokedexEntry.Status != PokedexStatus.Caught)
+            {
+                pokedexEntry.Status = PokedexStatus.Caught;
+            }
+        }
+
         await _dbContext.SaveChangesAsync();
 
         return Ok();
+    }
+
+    [Authorize]
+    [HttpGet("/api/pokedex")]
+    public async Task<IActionResult> GetPokedex()
+    {
+        var userIdClaim = User.Claims.FirstOrDefault(c =>
+            c.Type == System.Security.Claims.ClaimTypes.NameIdentifier && Guid.TryParse(c.Value, out _));
+        if (userIdClaim == null)
+            return Unauthorized("User ID not found in token.");
+
+        var userId = Guid.Parse(userIdClaim.Value);
+
+        var pokedexEntries = await _dbContext.UserPokedexEntries
+            .Where(p => p.UserId == userId)
+            .Select(p => new
+            {
+                p.PokemonId,
+                p.PokemonName,
+                Status = p.Status == PokedexStatus.Caught ? "caught" : "seen"
+            })
+            .ToListAsync();
+
+        return Ok(pokedexEntries);
     }
 }

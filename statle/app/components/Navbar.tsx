@@ -63,6 +63,22 @@ export default function Navbar() {
             >
               Leaderboard
             </span>
+            {username && (
+              <span
+                onClick={() => router.push("/Profile")}
+                className="text-gray-700 font-semibold cursor-pointer hover:text-blue-600 transition-colors"
+              >
+                Profile
+              </span>
+            )}
+            {username && (
+              <span
+                onClick={() => router.push("/Pokedex")}
+                className="text-gray-700 font-semibold cursor-pointer hover:text-blue-600 transition-colors"
+              >
+                Pokedex
+              </span>
+            )}
           </div>
         </div>
 

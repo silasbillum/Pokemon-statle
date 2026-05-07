@@ -62,6 +62,7 @@ public class GameEngine
     {
         public Guid GameId { get; set; } = Guid.NewGuid();
         public List<string> UsedStats { get; set; } = new List<string>();
+        public List<PokemonDetails> EncounteredPokemon { get; set; } = new List<PokemonDetails>();
         public int Score { get; set; } = 0;
     }
 
