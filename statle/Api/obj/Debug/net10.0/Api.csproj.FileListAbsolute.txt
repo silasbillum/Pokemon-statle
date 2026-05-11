@@ -538,3 +538,5 @@ C:\Users\sila1400\Documents\GitHub\Pokemon-statle\statle\api\obj\Debug\net10.0\A
 C:\Users\sila1400\Documents\GitHub\Pokemon-statle\statle\api\obj\Debug\net10.0\ref\Api.dll
 C:\Users\Silas\Documents\GitHub\Pokemon-statle\statle\api\bin\Debug\net10.0\Api.staticwebassets.runtime.json
 C:\Users\Silas\Documents\GitHub\Pokemon-statle\statle\api\obj\Debug\net10.0\compressed\d1ln6ye347-{0}-ar33gix4vg-ar33gix4vg.gz
+C:\Users\elias\Documents\GitHub\Pokemon-statle\statle\api\bin\Debug\net10.0\Api.staticwebassets.runtime.json
+C:\Users\elias\Documents\GitHub\Pokemon-statle\statle\api\obj\Debug\net10.0\compressed\d1ln6ye347-{0}-ar33gix4vg-ar33gix4vg.gz

@@ -4,10 +4,10 @@ import Link from "next/dist/client/link";
 import Navbar from "../components/Navbar";
 import Congratulations from "../components/Congratulations";
 import { useEffect, useState } from 'react';
+// Key for localStorage
+const LOCAL_STORAGE_KEY = 'statle-anon-game';
 import { refresh } from "next/cache";
 import Confetti from "react-confetti";
-import API_BASE_URL from '../lib/api';
-import LostScreen from "../components/LostScreen";
 
 type RevealedPokemon = {
   name: string;
@@ -23,11 +23,7 @@ type RevealedPokemon = {
 
 export default function GameplayPage() {
 
-
-
-  // ... existing code ...
-
-  const API = `${API_BASE_URL}/game`;
+  const API = `http://localhost:5175/api/game`;
 
   const [pokemon, setPokemon] = useState("");
   const [score, setScore] = useState(0);
@@ -41,15 +37,29 @@ export default function GameplayPage() {
   const [won, setWon] = useState(false);
   const [artworkName, setArtworkName] = useState("");
 
+
+  // Restore game state from localStorage if present
   useEffect(() => {
+    const saved = typeof window !== 'undefined' ? localStorage.getItem(LOCAL_STORAGE_KEY) : null;
+    if (saved) {
+      try {
+        const state = JSON.parse(saved);
+        setPokemon(state.pokemon || "");
+        setScore(state.score || 0);
+        setUsedStats(state.usedStats || []);
+        setMessage(state.message || "");
+        setGained(state.gained || 0);
+        setRevealedStats(state.revealedStats || {});
+        setRevealedPokemon(state.revealedPokemon || null);
+        setGameOver(state.gameOver || false);
+        setWon(state.won || false);
+        setbackground(state.background || "bg-gray-100 dark:bg-gray-800");
+        setArtworkName(state.artworkName || "");
+        return;
+      } catch {}
+    }
     startGame();
   }, []);
-
-  useEffect(() => {
-    if (won) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }, [won]);
 
   useEffect(() => {
     setArtworkName(pokemon);
@@ -70,8 +80,13 @@ export default function GameplayPage() {
     setGameOver(false);
     setWon(false);
     setbackground("bg-gray-100 dark:bg-gray-800");
-
+    setArtworkName("");
+    // Remove saved state on new game
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
+    }
   }
+  
 
 
   async function handleGuess(stat: string) {
@@ -82,10 +97,13 @@ export default function GameplayPage() {
     const data = await res.json();
     const revealedPokemonData = data.revealedPokemon as RevealedPokemon | undefined;
 
+    let newRevealedPokemon = revealedPokemon;
     if (revealedPokemonData) {
       setRevealedPokemon(revealedPokemonData);
+      newRevealedPokemon = revealedPokemonData;
     }
 
+    let isGameOver = false;
     if (data.usedStats.length >= 6) {
       setScore(data.score);
       setMessage(data.message);
@@ -96,35 +114,49 @@ export default function GameplayPage() {
         [stat]: data.gained
       }));
       setGameOver(true);
-      if (data.score >= 600) {
-        scrollTo({ top: 0, behavior: "smooth" });
+      isGameOver = true;
+      if (data.score >= 400) {
         await WonGame();
-
       }
-      else { LostScreen({ onPlayAgain: startGame, score: data.score }) }
       await SaveGame();
-      return;
-    }
-
-    setPokemon(data.pokemonName);
-    setScore(data.score);
-    setMessage(data.message);
-    setUsedStats(data.usedStats);
-    setGained(data.gained);
-    setRevealedStats(prev => ({
-      ...prev,
-      [stat]: data.gained
-    }));
-
-    if (data.gained >= 100) {
-      setbackground("bg-green-100 dark:bg-green-200");
     } else {
-      setbackground("bg-red-100 dark:bg-red-900");
+      setPokemon(data.pokemonName);
+      setScore(data.score);
+      setMessage(data.message);
+      setUsedStats(data.usedStats);
+      setGained(data.gained);
+      setRevealedStats(prev => ({
+        ...prev,
+        [stat]: data.gained
+      }));
+
+      if (data.gained >= 100) {
+        setbackground("bg-green-100 dark:bg-green-200");
+      } else {
+        setbackground("bg-red-100 dark:bg-red-900");
+      }
     }
 
-
-
-
+    // Save state to localStorage for anonymous users
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem("jwtToken");
+      if (!token) {
+        const state = {
+          pokemon: isGameOver ? "" : data.pokemonName,
+          score: data.score,
+          usedStats: data.usedStats,
+          message: data.message,
+          gained: data.gained,
+          revealedStats: isGameOver ? {} : { ...revealedStats, [stat]: data.gained },
+          revealedPokemon: isGameOver ? null : newRevealedPokemon,
+          gameOver: isGameOver,
+          won: isGameOver && data.score >= 400,
+          background: data.gained >= 100 ? "bg-green-100 dark:bg-green-200" : "bg-red-100 dark:bg-red-900",
+          artworkName: artworkName,
+        };
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
+      }
+    }
   }
 
   async function SaveGame() {
@@ -144,7 +176,6 @@ export default function GameplayPage() {
 
   async function WonGame() {
     setWon(true);
-    scrollTo({ top: 0, behavior: "smooth" });
   }
 
   async function ShowAllStats() {
@@ -158,8 +189,7 @@ export default function GameplayPage() {
   return (
     <>
       {won && <Congratulations onPlayAgain={startGame} />}
-      {gameOver && !won && <LostScreen onPlayAgain={startGame} score={score} />}
-
+              
       <main className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900 p-4 sm:p-8">
         <div className="w-full max-w-7xl mx-auto">
           <h1 className="text-4xl font-bold text-center text-gray-800 dark:text-gray-200 mb-12">Statle - Guess the Pokémon's Stats!</h1>
@@ -185,41 +215,41 @@ export default function GameplayPage() {
 
               </div>
               <div className="mt-4">
-                <p className="text-xl font-bold text-black dark:text-white">Score: {score}</p>
+                <p className="text-xl font-bold text-white">Score: {score}</p>
                 <p className="text-sm text-gray-400">{message}</p>
               </div>
-
-
+              
+              
             </div>
             <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_240px] gap-8 items-start">
               <div className="flex flex-col gap-4">
 
-                <>
-                  <button onClick={() => handleGuess("hp")} disabled={usedStats.includes("hp")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200`}>
-                    <span className="text-lg font-semibold text-gray-700 dark:text-gray-200 ">HP </span>
-                    <span className={`text-xl font-mono font-bold ${getColor(revealedStats["hp"])}`}>{revealedStats["hp"] ?? "?"}</span>
-                  </button>
-                  <button onClick={() => handleGuess("attack")} disabled={usedStats.includes("attack")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200 `}>
-                    <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">Attack</span>
-                    <span className={`text-xl font-mono font-bold ${getColor(revealedStats["attack"])}`}>{revealedStats["attack"] ?? "?"}</span>
-                  </button>
-                  <button onClick={() => handleGuess("defense")} disabled={usedStats.includes("defense")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200 `}>
-                    <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">Defense</span>
-                    <span className={`text-xl font-mono font-bold ${getColor(revealedStats["defense"])}`}>{revealedStats["defense"] ?? "?"}</span>
-                  </button>
-                  <button onClick={() => handleGuess("sp_atk")} disabled={usedStats.includes("sp_atk")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200 `}>
-                    <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">Sp. Atk</span>
-                    <span className={`text-xl font-mono font-bold ${getColor(revealedStats["sp_atk"])}`}>{revealedStats["sp_atk"] ?? "?"}</span>
-                  </button>
-                  <button onClick={() => handleGuess("sp_def")} disabled={usedStats.includes("sp_def")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200 `}>
-                    <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">Sp. Def</span>
-                    <span className={`text-xl font-mono font-bold ${getColor(revealedStats["sp_def"])}`}>{revealedStats["sp_def"] ?? "?"}</span>
-                  </button>
-                  <button onClick={() => handleGuess("speed")} disabled={usedStats.includes("speed")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200 `}>
-                    <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">Speed</span>
-                    <span className={`text-xl font-mono font-bold ${getColor(revealedStats["speed"])}`}>{revealedStats["speed"] ?? "?"}</span>
-                  </button>
-                </>
+              <>
+                <button onClick={() => handleGuess("hp")} disabled={usedStats.includes("hp")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200`}>
+                  <span className="text-lg font-semibold text-gray-700 dark:text-gray-200 ">HP </span>
+                  <span className={`text-xl font-mono font-bold ${getColor(revealedStats["hp"])}`}>{revealedStats["hp"] ?? "?"}</span>
+                </button>
+                <button onClick={() => handleGuess("attack")} disabled={usedStats.includes("attack")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200 `}>
+                  <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">Attack</span>
+                  <span className={`text-xl font-mono font-bold ${getColor(revealedStats["attack"])}`}>{revealedStats["attack"] ?? "?"}</span>
+                </button>
+                <button onClick={() => handleGuess("defense")} disabled={usedStats.includes("defense")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200 `}>
+                  <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">Defense</span>
+                  <span className={`text-xl font-mono font-bold ${getColor(revealedStats["defense"])}`}>{revealedStats["defense"] ?? "?"}</span>
+                </button>
+                <button onClick={() => handleGuess("sp_atk")} disabled={usedStats.includes("sp_atk")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200 `}>
+                  <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">Sp. Atk</span>
+                  <span className={`text-xl font-mono font-bold ${getColor(revealedStats["sp_atk"])}`}>{revealedStats["sp_atk"] ?? "?"}</span>
+                </button>
+                <button onClick={() => handleGuess("sp_def")} disabled={usedStats.includes("sp_def")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200 `}>
+                  <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">Sp. Def</span>
+                  <span className={`text-xl font-mono font-bold ${getColor(revealedStats["sp_def"])}`}>{revealedStats["sp_def"] ?? "?"}</span>
+                </button>
+                <button onClick={() => handleGuess("speed")} disabled={usedStats.includes("speed")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200 `}>
+                  <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">Speed</span>
+                  <span className={`text-xl font-mono font-bold ${getColor(revealedStats["speed"])}`}>{revealedStats["speed"] ?? "?"}</span>
+                </button>
+              </>
 
               </div>
 
