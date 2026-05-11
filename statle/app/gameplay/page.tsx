@@ -1,14 +1,12 @@
 
 'use client';
 import Link from "next/dist/client/link";
-import Navbar from "../components/Navbar";
 import Congratulations from "../components/Congratulations";
 import { useEffect, useState } from 'react';
 // Key for localStorage
 const LOCAL_STORAGE_KEY = 'statle-anon-game';
-import { refresh } from "next/cache";
-import Confetti from "react-confetti";
 import API_BASE_URL from '../lib/api';
+const PLAYER_ID_KEY = 'statle-player-id';
 
 type RevealedPokemon = {
   name: string;
@@ -37,6 +35,27 @@ export default function GameplayPage() {
   const [background, setbackground] = useState("bg-gray-100 dark:bg-gray-800");
   const [won, setWon] = useState(false);
   const [artworkName, setArtworkName] = useState("");
+
+  function getPlayerId() {
+    if (typeof window === 'undefined') return 'server';
+
+    const existing = localStorage.getItem(PLAYER_ID_KEY);
+    if (existing) return existing;
+
+    const created = typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+    localStorage.setItem(PLAYER_ID_KEY, created);
+    return created;
+  }
+
+  function buildGameHeaders(token?: string | null) {
+    return {
+      'X-Player-Id': getPlayerId(),
+      ...(token ? { Authorization: `Bearer ${token}` } : {})
+    };
+  }
 
 
   // Restore game state from localStorage if present
@@ -69,7 +88,12 @@ export default function GameplayPage() {
   async function startGame() {
     const response = await fetch(`${API}/start`, {
       method: "POST",
+      headers: buildGameHeaders()
     });
+    if (!response.ok) {
+      setMessage("Could not start game. Is the API running?");
+      return;
+    }
     const data = await response.json();
     setPokemon(data.pokemonName);
     setScore(0);
@@ -92,8 +116,14 @@ export default function GameplayPage() {
 
   async function handleGuess(stat: string) {
     const res = await fetch(`${API}/guess/${stat}`, {
-      method: "POST"
+      method: "POST",
+      headers: buildGameHeaders()
     });
+
+    if (!res.ok) {
+      setMessage("Could not submit guess. Please try again.");
+      return;
+    }
 
     const data = await res.json();
     const revealedPokemonData = data.revealedPokemon as RevealedPokemon | undefined;
@@ -151,7 +181,7 @@ export default function GameplayPage() {
           revealedStats: isGameOver ? {} : { ...revealedStats, [stat]: data.gained },
           revealedPokemon: isGameOver ? null : newRevealedPokemon,
           gameOver: isGameOver,
-          won: isGameOver && data.score >= 400,
+          won: isGameOver && data.score >= 600,
           background: data.gained >= 100 ? "bg-green-100 dark:bg-green-200" : "bg-red-100 dark:bg-red-900",
           artworkName: artworkName,
         };
@@ -164,9 +194,7 @@ export default function GameplayPage() {
     const token = typeof window !== "undefined" ? localStorage.getItem("jwtToken") : null;
     await fetch(`${API}/save`, {
       method: "POST",
-      headers: {
-        ...(token ? { Authorization: `Bearer ${token}` } : {})
-      }
+      headers: buildGameHeaders(token)
     });
   }
 

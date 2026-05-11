@@ -4,6 +4,7 @@ using statle.Api.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Concurrent;
 
 namespace statle.Api.Controller;
 
@@ -13,11 +14,15 @@ namespace statle.Api.Controller;
 public class GameController : ControllerBase
 {
     private readonly GameEngine _gameEngine;
-
-    private static GameEngine.Game? _currentGame;
-    private static PokemonDetails? _currentPokemon;
+    private static readonly ConcurrentDictionary<string, PlayerGameState> _playerGames = new();
 
     private readonly AppDbContext _dbContext;
+
+    private class PlayerGameState
+    {
+        public GameEngine.Game CurrentGame { get; set; } = new();
+        public PokemonDetails? CurrentPokemon { get; set; }
+    }
 
 
     public GameController(GameEngine gameEngine, AppDbContext dbContext)
@@ -26,22 +31,40 @@ public class GameController : ControllerBase
         _dbContext = dbContext;
     }
 
+    private string GetPlayerKey()
+    {
+        var playerId = Request.Headers["X-Player-Id"].FirstOrDefault();
+        if (!string.IsNullOrWhiteSpace(playerId))
+        {
+            return playerId;
+        }
+
+        return HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown-player";
+    }
+
     [HttpPost("start")]
     public IActionResult StartGame()
     {
         try
         {
-            _currentGame = _gameEngine.StartGame();
-            _currentPokemon = _gameEngine.GetRandomPokemon();
+            var playerKey = GetPlayerKey();
+            var currentGame = _gameEngine.StartGame();
+            var currentPokemon = _gameEngine.GetRandomPokemon();
 
-            if (_currentPokemon == null)
+            if (currentPokemon == null)
             {
                 Console.WriteLine("DEBUG: _currentPokemon is null");
                 return NotFound("Could not find a Pokémon to start the game.");
             }
 
-            Console.WriteLine($"DEBUG: Game started with Pokémon: {_currentPokemon.Name}");
-            return Ok(new { message = "New game started. A mystery Pokémon has been chosen.", gameId = _currentGame.GameId, pokemonName = _currentPokemon.Name });
+            _playerGames[playerKey] = new PlayerGameState
+            {
+                CurrentGame = currentGame,
+                CurrentPokemon = currentPokemon
+            };
+
+            Console.WriteLine($"DEBUG: Game started with Pokémon: {currentPokemon.Name} for player {playerKey}");
+            return Ok(new { message = "New game started. A mystery Pokémon has been chosen.", gameId = currentGame.GameId, pokemonName = currentPokemon.Name });
         }
         catch (Exception ex)
         {
@@ -54,16 +77,17 @@ public class GameController : ControllerBase
     [HttpPost("guess/{stat}")]
     public IActionResult GuessStat(string stat)
     {
-        if (_currentGame == null || _currentPokemon == null)
+        var playerKey = GetPlayerKey();
+        if (!_playerGames.TryGetValue(playerKey, out var playerState) || playerState.CurrentPokemon == null)
         {
             return BadRequest("Game has not been started. Please call /api/game/start first.");
         }
 
-        var guessedPokemon = _currentPokemon;
-        var (updatedGame, message) = _gameEngine.PickStat(_currentGame, guessedPokemon, stat);
+        var guessedPokemon = playerState.CurrentPokemon;
+        var (updatedGame, message) = _gameEngine.PickStat(playerState.CurrentGame, guessedPokemon, stat);
 
-        _currentGame = updatedGame;
-        _currentGame.EncounteredPokemon.Add(guessedPokemon);
+        playerState.CurrentGame = updatedGame;
+        playerState.CurrentGame.EncounteredPokemon.Add(guessedPokemon);
 
         int gained = 0;
         switch (stat.ToLower())
@@ -88,15 +112,20 @@ public class GameController : ControllerBase
                 break;
         }
 
-        _currentPokemon = _gameEngine.GetRandomPokemon();
+        playerState.CurrentPokemon = _gameEngine.GetRandomPokemon();
+
+        if (playerState.CurrentPokemon == null)
+        {
+            return NotFound("Could not load next Pokémon.");
+        }
 
         return Ok(new
         {
             message,
             score = updatedGame.Score,
-            pokemonName = _currentPokemon.Name,
+            pokemonName = playerState.CurrentPokemon.Name,
             gained,
-            usedStats = _currentGame.UsedStats,
+            usedStats = playerState.CurrentGame.UsedStats,
             revealedPokemon = new
             {
                 name = guessedPokemon.Name,
@@ -109,7 +138,8 @@ public class GameController : ControllerBase
     [Authorize]
     public async Task<IActionResult> SaveGame()
     {
-        if (_currentGame == null || !_currentGame.EncounteredPokemon.Any())
+        var playerKey = GetPlayerKey();
+        if (!_playerGames.TryGetValue(playerKey, out var playerState) || !playerState.CurrentGame.EncounteredPokemon.Any())
             return BadRequest("No active game or encountered Pokemon to save.");
 
         var userIdClaim = User.Claims.FirstOrDefault(c =>
@@ -123,15 +153,15 @@ public class GameController : ControllerBase
         {
             Id = Guid.NewGuid(),
             UserId = userId,
-            Score = _currentGame.Score,
-            UsedStatsJson = System.Text.Json.JsonSerializer.Serialize(_currentGame.UsedStats)
+            Score = playerState.CurrentGame.Score,
+            UsedStatsJson = System.Text.Json.JsonSerializer.Serialize(playerState.CurrentGame.UsedStats)
         };
         _dbContext.Games.Add(game);
 
         
-        bool isWin = _currentGame.Score >= 600;
+        bool isWin = playerState.CurrentGame.Score >= 600;
 
-        foreach (var pokemon in _currentGame.EncounteredPokemon)
+        foreach (var pokemon in playerState.CurrentGame.EncounteredPokemon)
         {
             var pokedexEntry = await _dbContext.UserPokedexEntries
                 .FirstOrDefaultAsync(p => p.UserId == userId && p.PokemonId == pokemon.Id);
