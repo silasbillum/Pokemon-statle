@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 const LOCAL_STORAGE_KEY = 'statle-anon-game';
 import { refresh } from "next/cache";
 import Confetti from "react-confetti";
+import API_BASE_URL from '../lib/api';
 
 type RevealedPokemon = {
   name: string;
@@ -23,7 +24,7 @@ type RevealedPokemon = {
 
 export default function GameplayPage() {
 
-  const API = `http://localhost:5175/api/game`;
+  const API = `${API_BASE_URL}/game`;
 
   const [pokemon, setPokemon] = useState("");
   const [score, setScore] = useState(0);
@@ -115,7 +116,7 @@ export default function GameplayPage() {
       }));
       setGameOver(true);
       isGameOver = true;
-      if (data.score >= 400) {
+      if (data.score >= 600) {
         await WonGame();
       }
       await SaveGame();
