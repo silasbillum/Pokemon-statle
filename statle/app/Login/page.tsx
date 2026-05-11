@@ -66,7 +66,7 @@ export default function LoginPage() {
     };
 
     return (
-        <main className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900 p-4 sm:p-8">
+        <main className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900 p-4 sm:p-8">
             <div className="w-full max-w-md mx-auto">
                 <h2 className="text-2xl font-semibold text-center text-gray-800 dark:text-gray-200 mb-6">Login to Statle</h2>
                 <form className="bg-white dark:bg-gray-800 shadow-md rounded-lg px-8 py-6" onSubmit={handleSubmit}>

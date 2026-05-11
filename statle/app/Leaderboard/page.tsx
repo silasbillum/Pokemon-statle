@@ -52,11 +52,11 @@ const LEADERBOARD_ENDPOINT = `${API_BASE_URL}/Leaderboard/top?limit=10`;
                 <div
                   key={index}
                   className={`grid grid-cols-4 items-center py-3 px-2 rounded-md transition-colors duration-200 ${isTopThree
-                    ? "font-bold dark:bg-yellow-900/50 hover:bg-yellow-100 dark:hover:bg-yellow-700/50"
+                    ? "font-bold  hover:bg-yellow-100 dark:hover:bg-yellow-700/50"
                     : "hover:bg-gray-100 dark:hover:bg-gray-700/50"
-                    } ${rank === 1 ? "text-yellow-600 dark:text-yellow-300 bg-amber-200 " : ""
-                    } ${rank === 2 ? "text-gray-500 dark:text-gray-300 bg-gray-300" : ""
-                    } ${rank === 3 ? "text-orange-600 dark:text-orange-400 bg-orange-300" : ""
+                    } ${rank === 1 ? "text-yellow-600 dark:text-yellow-800 bg-amber-200 dark:bg-amber-500 " : ""
+                    } ${rank === 2 ? "text-gray-500 dark:text-gray-500 bg-gray-300 dark:bg-gray-300 " : ""
+                    } ${rank === 3 ? "text-orange-600 dark:text-orange-800 bg-orange-300 dark:bg-orange-300 d" : ""
                     }`}
                 >
                   <div className="flex items-center justify-center">

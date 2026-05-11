@@ -8,7 +8,7 @@ type CongratulationsProps = {
 export default function Congratulations({ onPlayAgain }: CongratulationsProps) {
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-800">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
             <Confetti />
 
             <h1 className="text-4xl font-bold text-green-600 mb-4">Congratulations!</h1>

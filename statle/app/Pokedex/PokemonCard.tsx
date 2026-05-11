@@ -6,7 +6,7 @@ import clsx from 'clsx';
 
 interface PokemonCardProps {
     pokemon: Pokemon;
-    status: 'seen' | 'won' | 'unseen';
+    status: 'seen' | 'caught' | 'unseen';
 }
 
 const PokemonCard = ({ pokemon, status }: PokemonCardProps) => {
@@ -38,7 +38,7 @@ const PokemonCard = ({ pokemon, status }: PokemonCardProps) => {
     }
 
     return (
-        <div className="flex flex-col items-center p-4 bg-gray-100 rounded-lg shadow-md transition-transform transform hover:scale-105">
+        <div className="flex flex-col items-center rounded-lg border border-slate-200 bg-white/90 p-4 text-slate-800 shadow-md transition-transform transform hover:scale-105 backdrop-blur dark:border-slate-800 dark:bg-slate-800 dark:text-slate-200">
             {imageUrl && (
                 <img
                     src={imageUrl}

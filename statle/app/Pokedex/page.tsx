@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import allPokemon from '@/public/pokemon-details.json';
 import PokemonCard from './PokemonCard';
+import API_BASE_URL from '../lib/api';
 
 const generationRanges = [
     { gen: 1, start: 1, end: 151 },
@@ -28,7 +29,7 @@ const getGenerationFromId = (id: number) => {
 interface PokedexEntry {
     pokemonId: number;
     pokemonName: string;
-    status: 'seen' | 'won';
+    status: 'seen' | 'caught';
 }
 
 export interface Pokemon {
@@ -63,7 +64,7 @@ const PokedexPage = () => {
             }
 
             try {
-                const response = await fetch('/api/pokedex', {
+                const response = await fetch(`${API_BASE_URL}/pokedex`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -92,11 +93,11 @@ const PokedexPage = () => {
     };
 
     if (loading) {
-        return <div className="text-center mt-10">Loading Pokedex...</div>;
+        return <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center"><div className="text-center">Loading Pokedex...</div></div>;
     }
 
     if (error) {
-        return <div className="text-red-500 text-center mt-10">{error}</div>;
+        return <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center"><div className="text-red-500 text-center">{error}</div></div>;
     }
 
     const filteredPokemon = selectedGeneration
@@ -105,11 +106,11 @@ const PokedexPage = () => {
 
     const totalCount = filteredPokemon.length;
     const seenCount = filteredPokemon.filter(p => userPokedex.has(p.id)).length;
-    const caughtCount = filteredPokemon.filter(p => userPokedex.get(p.id)?.status === 'won').length;
+    const caughtCount = filteredPokemon.filter(p => userPokedex.get(p.id)?.status === 'caught').length;
 
     return (
-        <div className="container mx-auto px-4 py-8 flex">
-            
+        <div className="w-full px-4 py-8 flex bg-gray-100 dark:bg-gray-900 min-h-screen">
+            <div className="container mx-auto flex w-full">
             <aside className="w-1/6 pr-8">
                 <h2 className="text-2xl font-bold mb-4">Generations</h2>
                 <ul>
@@ -144,6 +145,7 @@ const PokedexPage = () => {
                     })}
                 </div>
             </main>
+            </div>
         </div>
     );
 };

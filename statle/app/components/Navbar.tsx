@@ -40,11 +40,11 @@ export default function Navbar() {
   };
 
   return (
-    <header className="w-full bg-white shadow-md sticky top-0 z-50">
+    <header className="sticky top-0 z-50 w-full border-b border-slate-200/80 bg-white/85 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/70 dark:border-slate-800 dark:bg-slate-950/80">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
         <div className="flex items-center gap-8">
           <span
-            className="text-3xl font-bold text-blue-600 cursor-pointer hover:opacity-80 transition-opacity"
+            className="text-3xl font-bold text-sky-700 cursor-pointer hover:opacity-80 transition-opacity dark:text-sky-400"
             onClick={() => router.push("/")}
             style={{ fontFamily: "'Press Start 2P', cursive" }}
           >
@@ -53,20 +53,20 @@ export default function Navbar() {
           <div className="hidden md:flex gap-6">
             <span
               onClick={() => router.push("/gameplay")}
-              className="text-gray-700 font-semibold cursor-pointer hover:text-blue-600 transition-colors"
+              className="text-slate-700 font-semibold cursor-pointer hover:text-sky-600 transition-colors dark:text-slate-300 dark:hover:text-sky-400"
             >
               Gameplay
             </span>
             <span
               onClick={() => router.push("/Leaderboard")}
-              className="text-gray-700 font-semibold cursor-pointer hover:text-blue-600 transition-colors"
+              className="text-slate-700 font-semibold cursor-pointer hover:text-sky-600 transition-colors dark:text-slate-300 dark:hover:text-sky-400"
             >
               Leaderboard
             </span>
             {username && (
               <span
                 onClick={() => router.push("/Profile")}
-                className="text-gray-700 font-semibold cursor-pointer hover:text-blue-600 transition-colors"
+                className="text-slate-700 font-semibold cursor-pointer hover:text-sky-600 transition-colors dark:text-slate-300 dark:hover:text-sky-400"
               >
                 Profile
               </span>
@@ -74,7 +74,7 @@ export default function Navbar() {
             {username && (
               <span
                 onClick={() => router.push("/Pokedex")}
-                className="text-gray-700 font-semibold cursor-pointer hover:text-blue-600 transition-colors"
+                className="text-slate-700 font-semibold cursor-pointer hover:text-sky-600 transition-colors dark:text-slate-300 dark:hover:text-sky-400"
               >
                 Pokedex
               </span>
@@ -85,12 +85,12 @@ export default function Navbar() {
         <div className="flex gap-4 items-center">
           {username ? (
             <>
-              <span className="text-gray-800 font-semibold">
+              <span className="font-semibold text-slate-700 dark:text-slate-200">
                 Hello, {username}
               </span>
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 rounded-lg bg-red-500 text-white font-bold border-2 border-red-500 hover:bg-red-600 transition-all"
+                className="rounded-lg border border-rose-500 bg-rose-500 px-4 py-2 font-bold text-white transition-all hover:bg-rose-600"
               >
                 Logout
               </button>
@@ -99,13 +99,13 @@ export default function Navbar() {
             <>
               <button
                 onClick={() => router.push("/Register")}
-                className="px-4 py-2 rounded-lg bg-yellow-400 text-gray-900 font-bold border-2 border-yellow-400 hover:bg-yellow-500 transition-all"
+                className="rounded-lg border border-amber-300 bg-amber-200 px-4 py-2 font-bold text-slate-900 transition-all hover:bg-amber-300 dark:border-amber-400 dark:bg-amber-300 dark:hover:bg-amber-400"
               >
                 Register
               </button>
               <button
                 onClick={() => router.push("/Login")}
-                className="px-4 py-2 rounded-lg bg-blue-500 text-white font-bold border-2 border-blue-500 hover:bg-blue-600 transition-all"
+                className="rounded-lg border border-sky-600 bg-sky-600 px-4 py-2 font-bold text-white transition-all hover:bg-sky-700"
               >
                 Login
               </button>

@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 // Key for localStorage
 const LOCAL_STORAGE_KEY = 'statle-anon-game';
 import API_BASE_URL from '../lib/api';
+import LostScreen from "../components/LostScreen";
 const PLAYER_ID_KEY = 'statle-player-id';
 
 type RevealedPokemon = {
@@ -218,14 +219,16 @@ export default function GameplayPage() {
   return (
     <>
       {won && <Congratulations onPlayAgain={startGame} />}
+      {gameOver && !won && <LostScreen onPlayAgain={startGame} score={score} />}
+
               
-      <main className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900 p-4 sm:p-8">
+      <main className="flex min-h-screen items-center justify-center bg-gray-100 p-4 sm:p-8 dark:bg-gray-900">
         <div className="w-full max-w-7xl mx-auto">
-          <h1 className="text-4xl font-bold text-center text-gray-800 dark:text-gray-200 mb-12">Statle - Guess the Pokémon's Stats!</h1>
-          <h2 className="text-2xl font-semibold text-center text-gray-800 dark:text-gray-200 mb-6">Get over 600 points to win!</h2>
+          <h1 className="text-4xl font-bold text-center text-slate-900 dark:text-slate-100 mb-12">Statle - Guess the Pokémon's Stats!</h1>
+          <h2 className="text-2xl font-semibold text-center text-slate-700 dark:text-slate-300 mb-6">Get over 600 points to win!</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
-            <div className="flex flex-col items-center text-center p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-md">
-              <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
+            <div className="flex flex-col items-center text-center p-8 rounded-2xl border border-slate-300 bg-slate-50/95 shadow-lg backdrop-blur dark:border-slate-800 dark:bg-slate-800/90">
+              <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
                 {pokemon}
               </h2>
               <div className="relative w-48 h-48">
@@ -244,8 +247,8 @@ export default function GameplayPage() {
 
               </div>
               <div className="mt-4">
-                <p className="text-xl font-bold text-white">Score: {score}</p>
-                <p className="text-sm text-gray-400">{message}</p>
+                <p className="text-xl font-bold text-slate-900 dark:text-white">Score: {score}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{message}</p>
               </div>
               
               
@@ -254,69 +257,69 @@ export default function GameplayPage() {
               <div className="flex flex-col gap-4">
 
               <>
-                <button onClick={() => handleGuess("hp")} disabled={usedStats.includes("hp")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200`}>
-                  <span className="text-lg font-semibold text-gray-700 dark:text-gray-200 ">HP </span>
+                <button onClick={() => handleGuess("hp")} disabled={usedStats.includes("hp")} className={`flex justify-between items-center w-full p-4 rounded-lg bg-slate-100 text-slate-900 border border-slate-300 shadow-sm hover:bg-slate-200 hover:border-slate-400 hover:shadow-md transition-all duration-200 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700 dark:hover:bg-slate-700`}>
+                  <span className="text-lg font-semibold text-slate-800 dark:text-slate-200 ">HP </span>
                   <span className={`text-xl font-mono font-bold ${getColor(revealedStats["hp"])}`}>{revealedStats["hp"] ?? "?"}</span>
                 </button>
-                <button onClick={() => handleGuess("attack")} disabled={usedStats.includes("attack")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200 `}>
-                  <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">Attack</span>
+                <button onClick={() => handleGuess("attack")} disabled={usedStats.includes("attack")} className={`flex justify-between items-center w-full p-4 rounded-lg bg-slate-100 text-slate-900 border border-slate-300 shadow-sm hover:bg-slate-200 hover:border-slate-400 hover:shadow-md transition-all duration-200 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700 dark:hover:bg-slate-700`}>
+                  <span className="text-lg font-semibold text-slate-800 dark:text-slate-200">Attack</span>
                   <span className={`text-xl font-mono font-bold ${getColor(revealedStats["attack"])}`}>{revealedStats["attack"] ?? "?"}</span>
                 </button>
-                <button onClick={() => handleGuess("defense")} disabled={usedStats.includes("defense")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200 `}>
-                  <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">Defense</span>
+                <button onClick={() => handleGuess("defense")} disabled={usedStats.includes("defense")} className={`flex justify-between items-center w-full p-4 rounded-lg bg-slate-100 text-slate-900 border border-slate-300 shadow-sm hover:bg-slate-200 hover:border-slate-400 hover:shadow-md transition-all duration-200 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700 dark:hover:bg-slate-700`}>
+                  <span className="text-lg font-semibold text-slate-800 dark:text-slate-200">Defense</span>
                   <span className={`text-xl font-mono font-bold ${getColor(revealedStats["defense"])}`}>{revealedStats["defense"] ?? "?"}</span>
                 </button>
-                <button onClick={() => handleGuess("sp_atk")} disabled={usedStats.includes("sp_atk")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200 `}>
-                  <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">Sp. Atk</span>
+                <button onClick={() => handleGuess("sp_atk")} disabled={usedStats.includes("sp_atk")} className={`flex justify-between items-center w-full p-4 rounded-lg bg-slate-100 text-slate-900 border border-slate-300 shadow-sm hover:bg-slate-200 hover:border-slate-400 hover:shadow-md transition-all duration-200 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700 dark:hover:bg-slate-700`}>
+                  <span className="text-lg font-semibold text-slate-800 dark:text-slate-200">Sp. Atk</span>
                   <span className={`text-xl font-mono font-bold ${getColor(revealedStats["sp_atk"])}`}>{revealedStats["sp_atk"] ?? "?"}</span>
                 </button>
-                <button onClick={() => handleGuess("sp_def")} disabled={usedStats.includes("sp_def")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200 `}>
-                  <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">Sp. Def</span>
+                <button onClick={() => handleGuess("sp_def")} disabled={usedStats.includes("sp_def")} className={`flex justify-between items-center w-full p-4 rounded-lg bg-slate-100 text-slate-900 border border-slate-300 shadow-sm hover:bg-slate-200 hover:border-slate-400 hover:shadow-md transition-all duration-200 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700 dark:hover:bg-slate-700`}>
+                  <span className="text-lg font-semibold text-slate-800 dark:text-slate-200">Sp. Def</span>
                   <span className={`text-xl font-mono font-bold ${getColor(revealedStats["sp_def"])}`}>{revealedStats["sp_def"] ?? "?"}</span>
                 </button>
-                <button onClick={() => handleGuess("speed")} disabled={usedStats.includes("speed")} className={`flex justify-between items-center w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-md transition-all duration-200 `}>
-                  <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">Speed</span>
+                <button onClick={() => handleGuess("speed")} disabled={usedStats.includes("speed")} className={`flex justify-between items-center w-full p-4 rounded-lg bg-slate-100 text-slate-900 border border-slate-300 shadow-sm hover:bg-slate-200 hover:border-slate-400 hover:shadow-md transition-all duration-200 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700 dark:hover:bg-slate-700`}>
+                  <span className="text-lg font-semibold text-slate-800 dark:text-slate-200">Speed</span>
                   <span className={`text-xl font-mono font-bold ${getColor(revealedStats["speed"])}`}>{revealedStats["speed"] ?? "?"}</span>
                 </button>
               </>
 
               </div>
 
-              <aside className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-md">
-                <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Pokémon stats</h3>
+              <aside className="rounded-2xl border border-slate-300 bg-slate-50/95 p-6 shadow-md backdrop-blur dark:border-slate-700 dark:bg-slate-800/90">
+                <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4">Pokémon stats</h3>
 
                 {revealedPokemon ? (
-                  <div className="space-y-2 text-sm text-gray-700 dark:text-gray-200">
-                    <p className="mb-2 font-semibold text-gray-900 dark:text-white">
+                  <div className="space-y-2 text-sm text-slate-700 dark:text-slate-200">
+                    <p className="mb-2 font-semibold text-slate-900 dark:text-white">
                       {revealedPokemon.name}
                     </p>
-                    <div className="flex items-center justify-between rounded-lg bg-gray-50 dark:bg-gray-900/60 px-4 py-3">
-                      <span className="font-medium text-gray-600 dark:text-gray-300">HP</span>
-                      <span className="font-mono font-bold text-gray-900 dark:text-white">{revealedPokemon.stats.hp}</span>
+                    <div className="flex items-center justify-between rounded-lg bg-slate-100 px-4 py-3 dark:bg-slate-900/60">
+                      <span className="font-medium text-slate-600 dark:text-slate-300">HP</span>
+                      <span className="font-mono font-bold text-slate-900 dark:text-white">{revealedPokemon.stats.hp}</span>
                     </div>
-                    <div className="flex items-center justify-between rounded-lg bg-gray-50 dark:bg-gray-900/60 px-4 py-3">
-                      <span className="font-medium text-gray-600 dark:text-gray-300">Attack</span>
-                      <span className="font-mono font-bold text-gray-900 dark:text-white">{revealedPokemon.stats.attack}</span>
+                    <div className="flex items-center justify-between rounded-lg bg-slate-100 px-4 py-3 dark:bg-slate-900/60">
+                      <span className="font-medium text-slate-600 dark:text-slate-300">Attack</span>
+                      <span className="font-mono font-bold text-slate-900 dark:text-white">{revealedPokemon.stats.attack}</span>
                     </div>
-                    <div className="flex items-center justify-between rounded-lg bg-gray-50 dark:bg-gray-900/60 px-4 py-3">
-                      <span className="font-medium text-gray-600 dark:text-gray-300">Defense</span>
-                      <span className="font-mono font-bold text-gray-900 dark:text-white">{revealedPokemon.stats.defense}</span>
+                    <div className="flex items-center justify-between rounded-lg bg-slate-100 px-4 py-3 dark:bg-slate-900/60">
+                      <span className="font-medium text-slate-600 dark:text-slate-300">Defense</span>
+                      <span className="font-mono font-bold text-slate-900 dark:text-white">{revealedPokemon.stats.defense}</span>
                     </div>
-                    <div className="flex items-center justify-between rounded-lg bg-gray-50 dark:bg-gray-900/60 px-4 py-3">
-                      <span className="font-medium text-gray-600 dark:text-gray-300">Sp. Atk</span>
-                      <span className="font-mono font-bold text-gray-900 dark:text-white">{revealedPokemon.stats.special_attack}</span>
+                    <div className="flex items-center justify-between rounded-lg bg-slate-100 px-4 py-3 dark:bg-slate-900/60">
+                      <span className="font-medium text-slate-600 dark:text-slate-300">Sp. Atk</span>
+                      <span className="font-mono font-bold text-slate-900 dark:text-white">{revealedPokemon.stats.special_attack}</span>
                     </div>
-                    <div className="flex items-center justify-between rounded-lg bg-gray-50 dark:bg-gray-900/60 px-4 py-3">
-                      <span className="font-medium text-gray-600 dark:text-gray-300">Sp. Def</span>
-                      <span className="font-mono font-bold text-gray-900 dark:text-white">{revealedPokemon.stats.special_defense}</span>
+                    <div className="flex items-center justify-between rounded-lg bg-slate-100 px-4 py-3 dark:bg-slate-900/60">
+                      <span className="font-medium text-slate-600 dark:text-slate-300">Sp. Def</span>
+                      <span className="font-mono font-bold text-slate-900 dark:text-white">{revealedPokemon.stats.special_defense}</span>
                     </div>
-                    <div className="flex items-center justify-between rounded-lg bg-gray-50 dark:bg-gray-900/60 px-4 py-3">
-                      <span className="font-medium text-gray-600 dark:text-gray-300">Speed</span>
-                      <span className="font-mono font-bold text-gray-900 dark:text-white">{revealedPokemon.stats.speed}</span>
+                    <div className="flex items-center justify-between rounded-lg bg-slate-100 px-4 py-3 dark:bg-slate-900/60">
+                      <span className="font-medium text-slate-600 dark:text-slate-300">Speed</span>
+                      <span className="font-mono font-bold text-slate-900 dark:text-white">{revealedPokemon.stats.speed}</span>
                     </div>
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
                     Pick a stat to show the full stat list here.
                   </p>
                 )}
@@ -325,12 +328,12 @@ export default function GameplayPage() {
             </div>
           </div>
           <div className="text-center mt-8">
-            < button onClick={startGame} className="px-6 py-3 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg shadow-md transition-colors duration-200">
+            < button onClick={startGame} className="px-6 py-3 bg-rose-500 hover:bg-rose-600 text-white font-semibold rounded-lg shadow-md transition-colors duration-200">
               Try Again
             </button>
           </div>
           <div className="text-center mt-8">
-            <Link href="/" className="text-sm text-gray-500 dark:text-gray-400 hover:underline">
+            <Link href="/" className="text-sm text-slate-500 dark:text-slate-400 hover:underline">
               &larr; Back to Home
             </Link>
           </div>

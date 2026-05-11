@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\elias\\Documents\\GitHub\\Pokemon-statle\\statle\\Api\\Api.csproj": {}
+    "C:\\Users\\elias\\Documents\\GitHub\\Pokemon-statle\\statle\\api\\Api.csproj": {}
   },
   "projects": {
-    "C:\\Users\\elias\\Documents\\GitHub\\Pokemon-statle\\statle\\Api\\Api.csproj": {
+    "C:\\Users\\elias\\Documents\\GitHub\\Pokemon-statle\\statle\\api\\Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\elias\\Documents\\GitHub\\Pokemon-statle\\statle\\Api\\Api.csproj",
+        "projectUniqueName": "C:\\Users\\elias\\Documents\\GitHub\\Pokemon-statle\\statle\\api\\Api.csproj",
         "projectName": "Api",
-        "projectPath": "C:\\Users\\elias\\Documents\\GitHub\\Pokemon-statle\\statle\\Api\\Api.csproj",
+        "projectPath": "C:\\Users\\elias\\Documents\\GitHub\\Pokemon-statle\\statle\\api\\Api.csproj",
         "packagesPath": "C:\\Users\\elias\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\elias\\Documents\\GitHub\\Pokemon-statle\\statle\\Api\\obj\\",
+        "outputPath": "C:\\Users\\elias\\Documents\\GitHub\\Pokemon-statle\\statle\\api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\elias\\AppData\\Roaming\\NuGet\\NuGet.Config"
