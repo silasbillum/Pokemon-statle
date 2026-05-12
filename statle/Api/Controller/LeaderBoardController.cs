@@ -34,6 +34,7 @@ public class LeaderBoardController : ControllerBase
             .Select(g => new {
                 Username = g.User.Username,
                 Score = g.Score,
+                PokemonNames = g.PokemonNamesJson != null ? System.Text.Json.JsonSerializer.Deserialize<List<string>>(g.PokemonNamesJson) : new List<string>(),
                 Date = g.CreatedAt
             })
             .ToList();

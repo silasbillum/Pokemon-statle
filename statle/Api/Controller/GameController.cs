@@ -154,7 +154,8 @@ public class GameController : ControllerBase
             Id = Guid.NewGuid(),
             UserId = userId,
             Score = playerState.CurrentGame.Score,
-            UsedStatsJson = System.Text.Json.JsonSerializer.Serialize(playerState.CurrentGame.UsedStats)
+            UsedStatsJson = System.Text.Json.JsonSerializer.Serialize(playerState.CurrentGame.UsedStats),
+            PokemonNamesJson = System.Text.Json.JsonSerializer.Serialize(playerState.CurrentGame.EncounteredPokemon.Select(p => p.Name).ToList())
         };
         _dbContext.Games.Add(game);
 
