@@ -7,6 +7,7 @@ interface UserProfile {
     highestScore: number;
     totalGamesPlayed: number;
     averageScore: number;
+    gamesWon: number;
 }
 
 const ProfilePage = () => {
@@ -64,6 +65,7 @@ const ProfilePage = () => {
                         <p className="text-lg text-slate-800 dark:text-slate-200"><span className="font-bold">Highest Score:</span> {profile.highestScore}</p>
                         <p className="text-lg text-slate-800 dark:text-slate-200"><span className="font-bold">Total Games Played:</span> {profile.totalGamesPlayed}</p>
                         <p className="text-lg text-slate-800 dark:text-slate-200"><span className="font-bold">Average Score:</span> {profile.averageScore.toFixed(2)}</p>
+                        <p className="text-lg text-slate-800 dark:text-slate-200"><span className="font-bold">Games Won:</span> {profile.gamesWon}</p>
                     </div>
                 </div>
             </div>

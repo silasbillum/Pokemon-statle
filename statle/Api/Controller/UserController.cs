@@ -40,19 +40,22 @@ public class UserController : ControllerBase
             {
                 highestScore = 0,
                 totalGamesPlayed = 0,
-                averageScore = 0.0
+                averageScore = 0.0,
+                gamesWon = 0
             });
         }
 
         var highestScore = userGames.Max(g => g.Score);
         var totalGamesPlayed = userGames.Count;
         var averageScore = userGames.Average(g => g.Score);
+        var gamesWon = userGames.Count(g => g.Score >= 600);
 
         return Ok(new
         {
             highestScore,
             totalGamesPlayed,
-            averageScore
+            averageScore,
+            gamesWon
         });
     }
 }
